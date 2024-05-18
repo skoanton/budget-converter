@@ -6,3 +6,9 @@ export interface Transaction {
     amount: string,
     category?: string,
 }
+
+export type Category = {
+    id: string,
+    name: string,
+    description: string
+}
