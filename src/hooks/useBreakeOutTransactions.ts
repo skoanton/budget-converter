@@ -1,17 +1,19 @@
-import { Transaction } from "@/types/transactions";
+import { Category, Transaction } from "@/types/transactions";
 import { v4 as uuidv4 } from "uuid";
-import { useFetchCategories } from "./useFetchCategories";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { removeFirstAndLastChar } from "@/utils/removeFirstAndLastChar";
 import { checkDescription } from "@/utils/checkDescription";
+import { getCategories } from "@/lib/getCategories";
+import { useGetCategories } from "./useGetCategories";
 
 
-export const useBreakOutTransactions = () => {
-  const categories = useFetchCategories();
+export const useBreakOutTransactions =  () => {
+ 
+  const categories = useGetCategories();
   
   const processTransactions = useCallback(async (text:string): Promise<Transaction[]> => {
-
+ 
     if(!text || categories.length === 0){
       return [];
     }
@@ -34,7 +36,7 @@ export const useBreakOutTransactions = () => {
 
           return {
             id: uuidv4(),
-            accountName: accountName,
+            account: accountName,
             date: new Date(splitedTransaction[6]),
             description: description,
             amount: splitedTransaction[10],
@@ -47,6 +49,7 @@ export const useBreakOutTransactions = () => {
       },[text])
       .filter((trans) => trans !== null) as Transaction[];
       return newTransactions
+  
   },[categories]);
 
   return {processTransactions}
