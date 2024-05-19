@@ -1,26 +1,25 @@
 import { Transaction } from "@/types/transactions";
 import { v4 as uuidv4 } from "uuid";
 import { useFetchCategories } from "./useFetchCategories";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { removeFirstAndLastChar } from "@/utils/removeFirstAndLastChar";
 import { checkDescription } from "@/utils/checkDescription";
 
 
-export const useBreakOutTransactions = (text: string): Transaction[] => {
+export const useBreakOutTransactions = () => {
   const categories = useFetchCategories();
-  const [transaction,setTransaction] = useState<Transaction[]>([]);
-
-  useEffect(()=> {
+  
+  const processTransactions = useCallback(async (text:string): Promise<Transaction[]> => {
 
     if(!text || categories.length === 0){
-      return;
+      return [];
     }
   
     const transactionLines = text?.split(`\n`);
     if (transactionLines.length < 3) {
       console.error('Not enough lines in the text');
-      return;
+      return [];
     }
     transactionLines.shift();
     transactionLines.shift();
@@ -47,9 +46,8 @@ export const useBreakOutTransactions = (text: string): Transaction[] => {
         }
       },[text])
       .filter((trans) => trans !== null) as Transaction[];
-      setTransaction(newTransactions);
-  },[text,categories])
+      return newTransactions
+  },[categories]);
 
-  
-  return transaction;
+  return {processTransactions}
 };

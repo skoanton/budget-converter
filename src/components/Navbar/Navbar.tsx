@@ -1,0 +1,20 @@
+import Link from "next/link";
+
+export default function Navbar() {
+  return (
+    <nav className="h-full bg-slate-600 flex justify-center w-48 p-4">
+      <ul className="flex flex-col items-center">
+        <Link href="/">
+          <li>Home</li>
+        </Link>
+
+        <Link href="/add-transactions">
+          <li>Lägg till transaktioner</li>
+        </Link>
+        <li>Transaktioner</li>
+
+        <li>Budget</li>
+      </ul>
+    </nav>
+  );
+}
