@@ -11,7 +11,9 @@ export default function Navbar() {
         <Link href="/add-transactions">
           <li>Lägg till transaktioner</li>
         </Link>
-        <li>Transaktioner</li>
+        <Link href="/transactions">
+          <li>Transaktioner</li>
+        </Link>
 
         <li>Budget</li>
       </ul>

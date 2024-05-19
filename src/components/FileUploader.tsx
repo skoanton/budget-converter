@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import AddCategory from "./AddCategory";
 import { extractCategorizedTransactions } from "@/utils/extractCategorizedTransactions";
 import { extractUncategorizedTransactions } from "@/utils/extractUncategorizedTransactions";
+import { uploadTransactions } from "@/lib/uploadTransactions";
 
 export default function FileUploader() {
   const [text, setText] = useState("");
@@ -77,7 +78,7 @@ export default function FileUploader() {
           );
         })}
       </section>
-      {uncategorizedTransactions.length > 0 && (
+      {uncategorizedTransactions.length > 0 ? (
         <section>
           <h2 className="text-xl font-bold">Transactions without categories</h2>
           <AddCategory
@@ -85,6 +86,10 @@ export default function FileUploader() {
             onHandleUpdateTransactions={handleUpdateTransactions}
           />
         </section>
+      ) : (
+        <button onClick={() => uploadTransactions(processedTransactions)}>
+          Done
+        </button>
       )}
     </>
   );

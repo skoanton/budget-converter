@@ -1,6 +1,7 @@
 import { useAddDescriptionToCategory } from "@/hooks/useAddDescriptionToCategory";
-import { useFetchCategories } from "@/hooks/useFetchCategories";
+import { getCategories } from "@/lib/getCategories";
 import { Transaction } from "@/types/transactions";
+import { sortCategory } from "@/utils/sortCategory";
 import { useState } from "react";
 
 type AddCategoryProps = {
@@ -9,25 +10,15 @@ type AddCategoryProps = {
     newCategorizedTransactions: Transaction[]
   ) => void;
 };
-export default function AddCategory({
+export default async function AddCategory({
   transactions,
   onHandleUpdateTransactions,
 }: AddCategoryProps) {
-  const categories = useFetchCategories();
+  const categories = await getCategories();
   const [currentForm, setCurrentForm] = useState(0);
 
   const addDescriptionToCategory = useAddDescriptionToCategory();
-  const sortedCategories = categories.sort((a, b) => {
-    const nameA = a.name.toUpperCase();
-    const nameB = b.name.toUpperCase();
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
-    return 0;
-  });
+  const sortedCategories = sortCategory(categories!);
 
   const handlesubmit = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -38,7 +29,7 @@ export default function AddCategory({
       e.currentTarget.elements.namedItem("categories") as HTMLSelectElement
     ).value;
 
-    const currentCategory = categories.find(
+    const currentCategory = categories!.find(
       (category) => category.id === categoryId
     );
 

@@ -12,9 +12,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="h-screen flex">
+      <body className="h-screen w-screen flex">
         <Navbar />
-        <main className="">{children}</main>
+        <main className="w-full">{children}</main>
       </body>
     </html>
   );
