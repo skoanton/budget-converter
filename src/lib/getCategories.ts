@@ -1,12 +1,14 @@
 import { Category } from "@/types/transactions";
-import { collection, getDocs } from "firebase/firestore";
-import db from "./firebase";
-import { sortCategory } from "@/utils/sortCategory";
 
-export const getCategories = async (): Promise<Category[] | undefined> => {
+const { db } = require('@/lib/firebase');
+import { sortCategory } from "@/utils/sortCategory";
+const { collection, getDocs } = require('firebase/firestore');
+
+export const getCategories = async (typeOfCategory:string): Promise<Category[] | undefined> => {
+    console.log("försöker hämta databas med", typeOfCategory);
     try {
-        const queryCollection = await getDocs(collection (db,"categories"));
-        const categoriesData = queryCollection.docs.map ((category) => ({
+        const queryCollection = await getDocs(collection (db,typeOfCategory));
+        const categoriesData = queryCollection.docs.map ((category:any) => ({
             id: category.id,
             ...category.data(),
         })) as Category[]

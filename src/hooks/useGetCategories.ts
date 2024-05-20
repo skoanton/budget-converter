@@ -2,14 +2,22 @@ import { getCategories } from "@/lib/getCategories";
 import { Category } from "@/types/transactions";
 import { useEffect, useState } from "react";
 
-export const useGetCategories = (): Category[] => {
-    const [categories,setCategories]= useState<Category[]>([]);
+interface Categories {
+  incomeCategories: Category[];
+  expenseCategories: Category[];
+}
+export const useGetCategories = (): Categories => {
+  console.log("kör useGetcategories");
+    const [incomeCategories,setIncomeCategories]= useState<Category[]>([]);
+    const [expenseCategories,setExpensCategories]= useState<Category[]>([]);
     useEffect(() => {
         const fetchCategories = async () => {
           try {
-            const fetchedCategories = await getCategories();
-            if (fetchedCategories) {
-              setCategories(fetchedCategories);
+            const fetchedIncomeCategories = await getCategories("income_categories");
+            const fetchedExpenseCategories = await getCategories("expenses_categories");
+            if (fetchedIncomeCategories && fetchedExpenseCategories ) {
+              setIncomeCategories(fetchedIncomeCategories);
+              setExpensCategories(fetchedExpenseCategories);
             } else {
               console.log("Could not get cateogires");
             }
@@ -21,5 +29,5 @@ export const useGetCategories = (): Category[] => {
         fetchCategories();
       }, []);
 
-      return categories;
+      return {incomeCategories,expenseCategories};
 }

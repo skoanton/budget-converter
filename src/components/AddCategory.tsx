@@ -25,6 +25,9 @@ export default function AddCategory({
               <p>Amount: {transaction.amount}</p>
               <p>Datum: {transaction.date.toLocaleDateString()}</p>
               <CategoryForm
+                categoryType={`${
+                  transaction.amount > 0 ? "income" : "expenses"
+                }`}
                 addCategory={true}
                 transaction={transaction}
                 transactions={transactions}

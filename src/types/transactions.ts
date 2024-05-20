@@ -3,7 +3,7 @@ export interface Transaction {
     account: string,
     date: Date,
     description: string,
-    amount: string,
+    amount: number,
     category?: string,
 }
 

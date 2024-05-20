@@ -16,6 +16,9 @@ export default function Navbar() {
         </Link>
 
         <li>Budget</li>
+        <Link href="/accounts">
+          <li>Accounts</li>
+        </Link>
       </ul>
     </nav>
   );

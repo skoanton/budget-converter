@@ -14,12 +14,14 @@ type CategoryFormBaseProps = {
 type CategoryFormChangeProps = {
   changeCategory: true;
   transaction: Transaction;
+  categoryType: "expenses" | "income";
 };
 
 type CategoryFormAddProps = {
   addCategory: true;
   transaction: Transaction;
   transactions: Transaction[];
+  categoryType: "expenses" | "income";
   onHandleUpdateTransactions: (
     newCategorizedTransactions: Transaction[]
   ) => void;
@@ -27,6 +29,7 @@ type CategoryFormAddProps = {
 
 type CategoryFormProps = CategoryFormBaseProps &
   (CategoryFormChangeProps | CategoryFormAddProps);
+
 function isChangeCategory(
   props: CategoryFormProps
 ): props is CategoryFormChangeProps {
@@ -41,17 +44,22 @@ function isAddCategory(
 
 export default function CategoryForm(props: CategoryFormProps) {
   const categories = useGetCategories();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formdata = new FormData(e.currentTarget);
-    if (isAddCategory(props)) {
-      const { transaction, transactions, onHandleUpdateTransactions } = props;
-      const categoryId = formdata.get("categories") as string;
-      const currentCategory = categories.find(
-        (category) => category.id === categoryId
-      );
-      if (currentCategory) {
+    const categoryId = formdata.get("categories") as string;
+    const currentCategory =
+      props.categoryType === "expenses"
+        ? categories.expenseCategories.find(
+            (category) => category.id === categoryId
+          )
+        : categories.incomeCategories.find(
+            (category) => category.id === categoryId
+          );
+    if (currentCategory) {
+      if (isAddCategory(props)) {
+        const { transaction, transactions, onHandleUpdateTransactions } = props;
+        console.log("Category ID:", categoryId);
         await addDescriptionToCategory(
           transaction.description,
           currentCategory
@@ -66,34 +74,47 @@ export default function CategoryForm(props: CategoryFormProps) {
         });
 
         onHandleUpdateTransactions(newCategorizedTransactions);
-      } else {
-        console.log("no such category");
       }
-    }
 
-    if (isChangeCategory(props)) {
-      const { transaction } = props;
-      const newTransactionData: Transaction = {
-        ...transaction,
-        category: formdata.get("categories") as string,
-      };
+      if (isChangeCategory(props)) {
+        const { transaction } = props;
 
-      updateTransactions(newTransactionData);
+        const newTransactionData: Transaction = {
+          ...transaction,
+          category: currentCategory.name,
+        };
+
+        updateTransactions(newTransactionData);
+      }
+    } else {
+      console.log("no such category");
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="">Add to Category</label>
-      <select name="categories">
-        {categories ? (
-          categories.map((category) => {
-            return (
-              <option key={category.id} value={category.name}>
+      <label htmlFor="categories">Add to Category</label>
+      <select name="categories" id="categories">
+        {props.categoryType === "expenses" ? (
+          categories.expenseCategories.length > 0 ? (
+            categories.expenseCategories.map((category) => (
+              <option key={category.id} value={category.id}>
                 {category.name}
               </option>
-            );
-          })
+            ))
+          ) : (
+            <option>No Categories found</option>
+          )
+        ) : props.categoryType === "income" ? (
+          categories.incomeCategories.length > 0 ? (
+            categories.incomeCategories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))
+          ) : (
+            <option>No Categories found</option>
+          )
         ) : (
           <option>No Categories found</option>
         )}

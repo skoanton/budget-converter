@@ -1,15 +1,24 @@
 "use client";
-import { useBreakOutTransactions } from "@/hooks/useBreakeOutTransactions";
 import { Transaction } from "@/types/transactions";
 import { useEffect, useState } from "react";
 import AddCategory from "./AddCategory";
 import { extractCategorizedTransactions } from "@/utils/extractCategorizedTransactions";
 import { extractUncategorizedTransactions } from "@/utils/extractUncategorizedTransactions";
 import { uploadTransactions } from "@/lib/uploadTransactions";
+import { useProcessTransactions } from "@/hooks/useProcessTransactions";
+import CreateNewAccountModal from "./CreateNewAccountForm/CreateNewAccountForm";
+import CreateNewAccountForm from "./CreateNewAccountForm/CreateNewAccountForm";
 
 export default function FileUploader() {
   const [text, setText] = useState("");
-  const { processTransactions } = useBreakOutTransactions();
+  const {
+    processTextTransactions,
+    loading,
+    error,
+    newTransaction,
+    handleNewAccountSubmit,
+    newAccountInfo,
+  } = useProcessTransactions();
   const [processedTransactions, setProcessedTransactions] = useState<
     Transaction[]
   >([]);
@@ -24,18 +33,23 @@ export default function FileUploader() {
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target) {
-          const text = event.target.result as string;
+          const arrayBuffer = event.target.result as ArrayBuffer;
+          const decoder = new TextDecoder("iso-8859-1");
+          const text = decoder.decode(arrayBuffer);
+          console.log("File content decoded:", text);
           setText(text);
         }
       };
-      reader.readAsText(selectedFile);
+      reader.readAsArrayBuffer(selectedFile);
     }
   };
 
   useEffect(() => {
+    console.log("useEffect triggered with text:", text);
     if (text) {
-      const getTransactions = async () => {
-        const allTransactions = await processTransactions(text);
+      console.log("Text is not empty, processing transactions...");
+      const processTransactionsFromText = async () => {
+        const allTransactions = await processTextTransactions(text);
         setProcessedTransactions(
           extractCategorizedTransactions(allTransactions)
         );
@@ -43,7 +57,8 @@ export default function FileUploader() {
           extractUncategorizedTransactions(allTransactions)
         );
       };
-      getTransactions();
+
+      processTransactionsFromText();
     }
   }, [text]);
 
@@ -59,6 +74,10 @@ export default function FileUploader() {
       prev.filter((trans) => !newCategorizedTransactions.includes(trans))
     );
   };
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <>
@@ -87,9 +106,18 @@ export default function FileUploader() {
           />
         </section>
       ) : (
-        <button onClick={() => uploadTransactions(processedTransactions)}>
-          Done
+        <button
+          className="border"
+          onClick={() => uploadTransactions(processedTransactions)}
+        >
+          Upload to database
         </button>
+      )}
+      {newTransaction && newAccountInfo && (
+        <CreateNewAccountForm
+          onSubmit={handleNewAccountSubmit}
+          accountName={newAccountInfo.name}
+        />
       )}
     </>
   );

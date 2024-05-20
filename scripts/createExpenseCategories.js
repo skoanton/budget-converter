@@ -1,4 +1,4 @@
-const db = require("../src/lib/firebase");
+const {db} = require("../src/lib/firebase");
 const { addDoc, collection } = require("firebase/firestore");
 
 

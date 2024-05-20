@@ -1,6 +1,7 @@
 import { Transaction } from "@/types/transactions"
-import db from "./firebase";
-import { Timestamp, doc, getDoc } from "firebase/firestore";
+const { db } = require('@/lib/firebase');
+
+const {Timestamp, doc, getDoc } = require('firebase/firestore');
 
 export const getTransactionById = async (transactionId:string): Promise<Transaction | undefined> => {
 
@@ -18,7 +19,7 @@ export const getTransactionById = async (transactionId:string): Promise<Transact
                 id: docSnap.id,
                 account: data.account,
                 category: data.category,
-                date: (data.date as Timestamp).toDate(),
+                date: data.date instanceof Timestamp ? data.date.toDate() : data.date,
                 description: data.description,
                 amount: data.amount
             } as Transaction;

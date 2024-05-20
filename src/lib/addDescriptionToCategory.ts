@@ -1,6 +1,8 @@
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import db from "./firebase";
+
+const { db } = require('@/lib/firebase');
 import { Category } from "@/types/transactions";
+const { doc, getDoc, updateDoc } = require('firebase/firestore');
+
 
 export const addDescriptionToCategory = async (description: string,category: Category) => {
 

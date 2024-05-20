@@ -20,7 +20,11 @@ export default async function TransactionDetails({
         <li>{transaction.description}</li>
         <li>{transaction.date.toDateString()}</li>
       </ul>
-      <CategoryForm changeCategory={true} transaction={transaction} />
+      <CategoryForm
+        categoryType={`${transaction.amount < 0 ? "expenses" : "income"}`}
+        changeCategory={true}
+        transaction={transaction}
+      />
     </>
   );
 }

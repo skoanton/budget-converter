@@ -1,6 +1,6 @@
 import { Transaction } from "@/types/transactions";
-import { doc, updateDoc, writeBatch } from "firebase/firestore";
-import db from "./firebase";
+const { db } = require('@/lib/firebase');
+const {doc, updateDoc, writeBatch  } = require('firebase/firestore');
 
 export const updateTransactions = async (
   newTransactionData: Transaction | Transaction[]

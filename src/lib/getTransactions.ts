@@ -1,5 +1,6 @@
-import { Timestamp, collection, doc, getDoc, getDocs } from "firebase/firestore";
-import db from "./firebase";
+
+const {Timestamp, collection, doc, getDoc, getDocs } = require('firebase/firestore');
+const { db } = require('@/lib/firebase');
 import { Transaction } from "@/types/transactions";
 
 export const getTransactions = async (): Promise<Transaction[]> => {
@@ -12,13 +13,13 @@ export const getTransactions = async (): Promise<Transaction[]> => {
             console.log("No transactions found");
             return [];
         }
-        const transactionData = transactionSnapshot.docs.map(doc => {
+        const transactionData = transactionSnapshot.docs.map((doc:any) => {
             const data = doc.data();
             return {
                 id: doc.id,
                 account: data.account,
                 category: data.category,
-                date: (data.date as Timestamp).toDate(),
+                date: data.date instanceof Timestamp ? data.date.toDate() : data.date,
                 description: data.description,
                 amount: data.amount
             } as Transaction;

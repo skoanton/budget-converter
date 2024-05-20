@@ -1,7 +1,6 @@
-import db from "@/lib/firebase";
+const { db } = require('@/lib/firebase');
 import { Transaction } from "@/types/transactions";
-
-import { addDoc, collection  } from "firebase/firestore"; 
+const {addDoc, collection } = require('firebase/firestore');
 
 
 export const uploadTransactions = async (transactions: Transaction[]) => {

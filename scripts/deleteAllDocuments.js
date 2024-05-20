@@ -1,4 +1,4 @@
-const db = require("../src/lib/firebase");
+const {db} = require("../src/lib/firebase");
 const { collection, getDocs, deleteDoc, doc } = require("firebase/firestore");
 
 async function deleteAllDocuments(collectionName) {
