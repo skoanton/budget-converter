@@ -1,11 +1,20 @@
+"use client";
+import { getAccounts } from "@/lib/getAccounts";
 import { Account } from "@/types/accountType";
+import { useEffect, useState } from "react";
 
-type AccountViewProps = {
-  accounts: Account[];
-};
+export default function AccountView() {
+  const [accounts, setAccounts] = useState<Account[]>([]);
 
-export default function AccountView({ accounts }: AccountViewProps) {
-  console.log(accounts);
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      const fetchedAccounts = await getAccounts();
+      setAccounts(fetchedAccounts);
+    };
+
+    fetchAccounts();
+  }, []);
+
   return (
     <div className="grid grid-cols-4 gap-2">
       {accounts.map((account) => {

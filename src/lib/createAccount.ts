@@ -9,7 +9,7 @@ export const createAccount = async (accountName: string,startAmount:number) => {
     try {
           await addDoc(collection(db,COLLECTION_NAMES.ACCOUNTS), {
             name: accountName,
-            amount: startAmount
+            balance: startAmount
          })
          console.log("Account created with name:", accountName);
     } catch (error) {

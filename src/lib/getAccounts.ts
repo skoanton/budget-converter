@@ -3,7 +3,7 @@ import { db } from "./firebase";
 import { Account } from "@/types/accountType";
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 
-export const getAccounts = async (): Promise<DocumentReference<Account>[]> => {
+export const getAccounts = async (): Promise<Account[]> => {
 
     try {
         const accountSnapshot = await getDocs(collection(db,COLLECTION_NAMES.ACCOUNTS));
@@ -12,10 +12,15 @@ export const getAccounts = async (): Promise<DocumentReference<Account>[]> => {
             console.log("No accounts");
             return [];
         }
-        const accountRefs = accountSnapshot.docs.map((accountDoc)=> {
-            return doc(db,`${COLLECTION_NAMES.ACCOUNTS}/${accountDoc.id}`) as DocumentReference<Account>
+        const accountRefs : Account[] = accountSnapshot.docs.map((accountDoc)=> {
+            const accountData = accountDoc.data();
+            return {
+                id: accountDoc.id,
+                name: accountData.name,
+                balance: accountData.balance
+            }
         })
-        
+
         return accountRefs;
 
     } catch (error) {
