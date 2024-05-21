@@ -15,4 +15,4 @@ async function deleteAllDocuments(collectionName) {
   }
 }
 
-deleteAllDocuments("transactions").catch(console.error);
+deleteAllDocuments("income_categories").catch(console.error);

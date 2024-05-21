@@ -41,7 +41,9 @@ async function createExpenseCategories(){
         for( const category of categories){
             await addDoc(expensesCategoriesCollection, {
                 description: "",
-                name: category
+                name: category,
+                spentAmount:0,
+                budgetLimit: 0
             })
         }
         
