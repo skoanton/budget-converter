@@ -1,15 +1,23 @@
 "use client";
 
-import { Transaction } from "@/types/transactions";
+import { Transaction } from "@/types/transactionsType";
 import Link from "next/link";
+import TransactionRow from "./TransactionRow";
+import { useEffect, useState } from "react";
+import { getTransactions } from "@/lib/getTransactions";
 
-type TransactionTableProps = {
-  transactions: Transaction[];
-};
+export default function TransactionTable() {
+  const [transactions, setTransations] = useState<Transaction[]>([]);
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const fetchedTransaction = await getTransactions();
+      if (fetchedTransaction) {
+        setTransations(fetchedTransaction);
+      }
+    };
+    fetchTransactions();
+  }, []);
 
-export default function TransactionTable({
-  transactions,
-}: TransactionTableProps) {
   return (
     <>
       <table className="w-full">
@@ -23,24 +31,15 @@ export default function TransactionTable({
           </tr>
         </thead>
         <tbody>
-          {transactions.map((transaction) => {
-            return (
-              <tr key={transaction.id} className="text-center">
-                <td className="border">
-                  <Link href={`/transactions/${transaction.id}`}>
-                    {transaction.description}{" "}
-                  </Link>
-                </td>
-
-                <td className="border">{transaction.account}</td>
-                <td className="border">{transaction.category}</td>
-                <td className="border">
-                  {transaction.date.toLocaleDateString()}
-                </td>
-                <td className="border">{transaction.amount}</td>
-              </tr>
-            );
-          })}
+          {transactions &&
+            transactions.map((transaction) => {
+              return (
+                <TransactionRow
+                  key={transaction.id}
+                  transaction={transaction}
+                />
+              );
+            })}
         </tbody>
       </table>
     </>

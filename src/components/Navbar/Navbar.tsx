@@ -2,23 +2,21 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <nav className="h-full bg-slate-600 flex justify-center w-48 p-4">
-      <ul className="flex flex-col items-center">
-        <Link href="/">
-          <li>Home</li>
-        </Link>
-
-        <Link href="/add-transactions">
-          <li>Lägg till transaktioner</li>
-        </Link>
-        <Link href="/transactions">
-          <li>Transaktioner</li>
-        </Link>
-
+    <nav className="h-full bg-slate-600 flex justify-center min-w-max  p-8">
+      <ul className="flex flex-col items-center text-xl gap-5">
+        <li>
+          <Link href="/">Home</Link>
+        </li>
+        <li>
+          <Link href="/add-transactions">Lägg till transaktioner</Link>
+        </li>
+        <li>
+          <Link href="/transactions">Transaktioner</Link>
+        </li>
         <li>Budget</li>
-        <Link href="/accounts">
-          <li>Accounts</li>
-        </Link>
+        <li>
+          <Link href="/accounts">Accounts</Link>
+        </li>
       </ul>
     </nav>
   );

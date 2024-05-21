@@ -1,6 +1,9 @@
-import { Transaction } from "@/types/transactions";
-const { db } = require('@/lib/firebase');
-const {doc, updateDoc, writeBatch  } = require('firebase/firestore');
+
+import { writeBatch, doc } from "firebase/firestore";
+import { db } from "./firebase";
+import { COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { Transaction } from "@/types/transactionsType";
+
 
 export const updateTransactions = async (
   newTransactionData: Transaction | Transaction[]
@@ -10,7 +13,7 @@ export const updateTransactions = async (
 
     if (Array.isArray(newTransactionData)) {
       for (const transaction of newTransactionData) {
-        const transactionRef = doc(db, "transactions", transaction.id);
+        const transactionRef = doc(db, COLLECTION_NAMES.TRANSACTIONS, transaction.id);
 
         batch.update(transactionRef, {
           account: transaction.account,
@@ -21,7 +24,7 @@ export const updateTransactions = async (
         });
       }
     } else {
-      const transactionRef = doc(db, "transactions", newTransactionData.id);
+      const transactionRef = doc(db, COLLECTION_NAMES.TRANSACTIONS, newTransactionData.id);
       batch.update(transactionRef, {
         account: newTransactionData.account,
         category: newTransactionData.category,

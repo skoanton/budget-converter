@@ -1,15 +1,20 @@
-import CategoryForm from "../CategoryForm/CategoryForm";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useGetAccountRef } from "@/hooks/useGetAccountRef";
 import { useGetCategoryRef } from "@/hooks/useGetCategoryRef";
 import { Transaction } from "@/types/transactionsType";
 
-type TransactionDetailsProps = {
+type TransactionCardProps = {
   transaction: Transaction;
 };
 
-export default async function TransactionDetails({
-  transaction,
-}: TransactionDetailsProps) {
+export default function TransactionCard({ transaction }: TransactionCardProps) {
   const {
     account,
     error: accountError,
@@ -35,20 +40,18 @@ export default async function TransactionDetails({
   }
 
   return (
-    <>
-      <ul>
-        <li>{transaction.id}</li>
-        <li>{category?.name}</li>
-        <li>{account?.name}</li>
-        <li>{transaction.amount}</li>
-        <li>{transaction.description}</li>
-        <li>{transaction.date.toDateString()}</li>
-      </ul>
-      <CategoryForm
-        categoryType={`${transaction.amount < 0 ? "expenses" : "income"}`}
-        changeCategory={true}
-        transaction={transaction}
-      />
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle>{category.name}</CardTitle>
+        <CardDescription>{account.name}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p>Description: {transaction.description}</p>
+        <p> Amount: {transaction.amount}</p>
+      </CardContent>
+      <CardFooter>
+        <p>Date: {transaction.date.toDateString()}</p>
+      </CardFooter>
+    </Card>
   );
 }

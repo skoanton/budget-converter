@@ -1,7 +1,9 @@
-import { Transaction } from "@/types/transactions"
-const { db } = require('@/lib/firebase');
 
-const {Timestamp, doc, getDoc } = require('firebase/firestore');
+import { doc, getDoc, Timestamp } from "firebase/firestore";
+import { db } from "./firebase";
+import { Transaction } from "@/types/transactionsType";
+import { COLLECTION_NAMES } from "@/constants/collectionsNames";
+
 
 export const getTransactionById = async (transactionId:string): Promise<Transaction | undefined> => {
 
@@ -10,7 +12,7 @@ export const getTransactionById = async (transactionId:string): Promise<Transact
             throw new Error('Transaction ID is not provided');
         }
 
-        const docRef = doc(db,"transactions",transactionId );
+        const docRef = doc(db,COLLECTION_NAMES.TRANSACTIONS,transactionId );
         const docSnap = await getDoc(docRef);
 
         if(docSnap.exists()){

@@ -1,7 +1,9 @@
 "use client";
-import { Transaction } from "@/types/transactions";
-import { useState } from "react";
+
+import React, { Fragment, useState } from "react";
 import CategoryForm from "./CategoryForm/CategoryForm";
+import TransactionCard from "./Transactioncard/TransactionCard";
+import { Transaction } from "@/types/transactionsType";
 
 type AddCategoryProps = {
   transactions: Transaction[];
@@ -20,10 +22,8 @@ export default function AddCategory({
       {transactions.map((transaction, index) => {
         return (
           currentForm === index && (
-            <div key={transaction.id}>
-              <h2>{transaction.description}</h2>
-              <p>Amount: {transaction.amount}</p>
-              <p>Datum: {transaction.date.toLocaleDateString()}</p>
+            <div key={transaction.account.id}>
+              <TransactionCard key={transaction.id} transaction={transaction} />
               <CategoryForm
                 categoryType={`${
                   transaction.amount > 0 ? "income" : "expenses"

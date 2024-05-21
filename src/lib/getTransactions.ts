@@ -1,12 +1,13 @@
 
-const {Timestamp, collection, doc, getDoc, getDocs } = require('firebase/firestore');
-const { db } = require('@/lib/firebase');
-import { Transaction } from "@/types/transactions";
+import { collection, getDocs, Timestamp } from "firebase/firestore";
+import { db } from "./firebase";
+import { Transaction } from "@/types/transactionsType";
+import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 
 export const getTransactions = async (): Promise<Transaction[]> => {
 
     try {
-        const transactionCollection = collection(db,"transactions");
+        const transactionCollection = collection(db,COLLECTION_NAMES.TRANSACTIONS);
         const transactionSnapshot = await getDocs(transactionCollection);
 
         if(transactionSnapshot.empty){

@@ -1,5 +1,4 @@
 "use client";
-import { Transaction } from "@/types/transactions";
 import { useEffect, useState } from "react";
 import AddCategory from "./AddCategory";
 import { extractCategorizedTransactions } from "@/utils/extractCategorizedTransactions";
@@ -8,6 +7,18 @@ import { uploadTransactions } from "@/lib/uploadTransactions";
 import { useProcessTransactions } from "@/hooks/useProcessTransactions";
 import CreateNewAccountModal from "./CreateNewAccountForm/CreateNewAccountForm";
 import CreateNewAccountForm from "./CreateNewAccountForm/CreateNewAccountForm";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import TransactionCard from "./Transactioncard/TransactionCard";
+import { Transaction } from "@/types/transactionsType";
 
 export default function FileUploader() {
   const [text, setText] = useState("");
@@ -36,7 +47,6 @@ export default function FileUploader() {
           const arrayBuffer = event.target.result as ArrayBuffer;
           const decoder = new TextDecoder("iso-8859-1");
           const text = decoder.decode(arrayBuffer);
-          console.log("File content decoded:", text);
           setText(text);
         }
       };
@@ -45,17 +55,17 @@ export default function FileUploader() {
   };
 
   useEffect(() => {
-    console.log("useEffect triggered with text:", text);
     if (text) {
-      console.log("Text is not empty, processing transactions...");
       const processTransactionsFromText = async () => {
         const allTransactions = await processTextTransactions(text);
-        setProcessedTransactions(
-          extractCategorizedTransactions(allTransactions)
+        const categorizedTransactions = await extractCategorizedTransactions(
+          allTransactions
         );
-        setUncategorizedTransactions(
-          extractUncategorizedTransactions(allTransactions)
-        );
+        setProcessedTransactions(categorizedTransactions);
+        const uncategorizedTransactions =
+          await extractUncategorizedTransactions(allTransactions);
+
+        setUncategorizedTransactions(uncategorizedTransactions);
       };
 
       processTransactionsFromText();
@@ -78,22 +88,22 @@ export default function FileUploader() {
   if (error) {
     return <div>{error}</div>;
   }
-
   return (
-    <>
-      <form>
-        <label htmlFor="file">Choose a file</label>
-        <input type="file" id="file" name="file" onChange={handleFileChange} />
-      </form>
+    <section className="w-full h-full flex flex-col items-center gap-2">
+      <div>
+        <form>
+          <Input
+            type="file"
+            id="file"
+            name="file"
+            onChange={handleFileChange}
+          />
+        </form>
+      </div>
       <section className="grid grid-cols-5 gap-3">
         {processedTransactions.map((transaction) => {
           return (
-            <div key={transaction.id} className="border">
-              <h2 className="text-xl font-bold">{transaction.description}</h2>
-              <p>Amount: {transaction.amount}</p>
-              <p>Datum: {transaction.date.toLocaleDateString()}</p>
-              <p>Category: {transaction.category}</p>
-            </div>
+            <TransactionCard key={transaction.id} transaction={transaction} />
           );
         })}
       </section>
@@ -106,19 +116,19 @@ export default function FileUploader() {
           />
         </section>
       ) : (
-        <button
-          className="border"
-          onClick={() => uploadTransactions(processedTransactions)}
-        >
+        <Button onClick={() => uploadTransactions(processedTransactions)}>
           Upload to database
-        </button>
+        </Button>
       )}
       {newTransaction && newAccountInfo && (
-        <CreateNewAccountForm
-          onSubmit={handleNewAccountSubmit}
-          accountName={newAccountInfo.name}
-        />
+        <>
+          <div>Detta ska synas nu</div>
+          <CreateNewAccountForm
+            onSubmit={handleNewAccountSubmit}
+            accountName={newAccountInfo.name}
+          />
+        </>
       )}
-    </>
+    </section>
   );
 }

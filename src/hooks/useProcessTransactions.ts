@@ -1,9 +1,10 @@
-import { Transaction } from "@/types/transactions";
+
 import { useCallback, useEffect, useState } from "react";
 import { useGetCategories } from "./useGetCategories";
 import { processTransactions } from "@/utils/processTransactions";
-import { Account } from "@/types/account";
-import { resolve } from "path";
+import { Account } from "@/types/accountType";
+import { Transaction } from "@/types/transactionsType";
+
 
 
 export const useProcessTransactions = ()  => {
@@ -17,8 +18,7 @@ export const useProcessTransactions = ()  => {
   const showNewAccountForm = useCallback((accountName:string) => {
     return new Promise<number>((resolve) => {
       setResolveNewAccount(() => resolve);
-      setNewAccountInfo({id: "", name: accountName, amount: 0});
-      
+      setNewAccountInfo({id: "", name: accountName, balance: 0});   
       setNewTransaction(true);
     });
   }, [])

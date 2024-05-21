@@ -1,10 +1,42 @@
 "use client";
 import { useGetCategories } from "@/hooks/useGetCategories";
-import { addDescriptionToCategory } from "@/lib/addDescriptionToCategory";
-import { getCategories } from "@/lib/getCategories";
+
 import { updateTransactions } from "@/lib/updateTransactions";
-import { Category, Transaction } from "@/types/transactions";
+
 import React, { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Category, Transaction } from "@/types/transactionsType";
+import { addDescriptionToCategory } from "@/lib/categories/addDescriptionToCategory";
+import { getCategoryById } from "@/lib/categories/getCategoryById";
+import { COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { DocumentReference } from "firebase/firestore";
+import { getCategoryRefById } from "@/lib/categories/getCategoryRefById";
+import { truncateSync } from "fs";
+
+const formSchema = z.object({
+  category: z.string(),
+});
 
 type CategoryFormBaseProps = {
   changeCategory?: boolean;
@@ -43,83 +75,188 @@ function isAddCategory(
 }
 
 export default function CategoryForm(props: CategoryFormProps) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      category: "",
+    },
+  });
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    handleSubmit(values.category);
+  }
   const categories = useGetCategories();
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formdata = new FormData(e.currentTarget);
-    const categoryId = formdata.get("categories") as string;
-    const currentCategory =
-      props.categoryType === "expenses"
-        ? categories.expenseCategories.find(
-            (category) => category.id === categoryId
-          )
-        : categories.incomeCategories.find(
-            (category) => category.id === categoryId
-          );
-    if (currentCategory) {
-      if (isAddCategory(props)) {
-        const { transaction, transactions, onHandleUpdateTransactions } = props;
-        console.log("Category ID:", categoryId);
-        await addDescriptionToCategory(
-          transaction.description,
-          currentCategory
-        );
-        addDescriptionToCategory(transaction.description, currentCategory);
-        const newCategorizedTransactions = transactions.filter(
-          (trans) => trans.description === transaction.description
-        );
 
-        newCategorizedTransactions.forEach((trans) => {
-          trans.category = currentCategory.name;
-        });
+  const fetchCategory = async (
+    inputCategory: string
+  ): Promise<{
+    currentCategoryRef: DocumentReference<Category> | null;
+    currentCategory: Category | null;
+    currentCollectionName: string;
+  }> => {
+    const collectionName =
+      props.transaction.type === "expense"
+        ? COLLECTION_NAMES.EXPENSES_CATEGORIES
+        : COLLECTION_NAMES.INCOME_CATEGORIES;
 
-        onHandleUpdateTransactions(newCategorizedTransactions);
-      }
+    try {
+      const fetchedCategoryRef = await getCategoryRefById(
+        inputCategory,
+        collectionName
+      );
 
-      if (isChangeCategory(props)) {
-        const { transaction } = props;
-
-        const newTransactionData: Transaction = {
-          ...transaction,
-          category: currentCategory.name,
+      if (!fetchedCategoryRef) {
+        console.error("Could not fetch category ref");
+        return {
+          currentCategoryRef: null,
+          currentCategory: null,
+          currentCollectionName: collectionName,
         };
-
-        updateTransactions(newTransactionData);
       }
-    } else {
-      console.log("no such category");
+
+      const fetchedCategory = await getCategoryById(
+        fetchedCategoryRef.id,
+        collectionName
+      );
+
+      if (!fetchedCategory) {
+        console.error(" Could not fetch category");
+        return {
+          currentCategoryRef: null,
+          currentCategory: null,
+          currentCollectionName: collectionName,
+        };
+      }
+
+      return {
+        currentCategoryRef: fetchedCategoryRef,
+        currentCategory: fetchedCategory,
+        currentCollectionName: collectionName,
+      };
+    } catch (error) {
+      console.error("An error occurred while fetching category:", error);
+      return {
+        currentCategoryRef: null,
+        currentCategory: null,
+        currentCollectionName: collectionName,
+      };
+    }
+  };
+
+  const handleSubmit = async (inputCategory: string) => {
+    try {
+      const { currentCategoryRef, currentCategory, currentCollectionName } =
+        await fetchCategory(inputCategory);
+
+      if (currentCategoryRef && currentCategory) {
+        console.log("Current category:", currentCategory);
+        if (isAddCategory(props)) {
+          const { transaction, transactions, onHandleUpdateTransactions } =
+            props;
+          try {
+            await addDescriptionToCategory(
+              transaction.description,
+              currentCategory,
+              currentCollectionName
+            );
+            const newCategorizedTransactions = transactions.filter(
+              (trans) => trans.description === transaction.description
+            );
+
+            newCategorizedTransactions.forEach((trans) => {
+              trans.category = currentCategoryRef;
+            });
+
+            onHandleUpdateTransactions(newCategorizedTransactions);
+          } catch (error) {
+            console.error(
+              `Could not add ${transaction.description} to ${currentCategory.name}`
+            );
+          }
+        }
+
+        if (isChangeCategory(props)) {
+          const { transaction } = props;
+
+          const newTransactionData: Transaction = {
+            ...transaction,
+            category: currentCategoryRef,
+          };
+          try {
+            updateTransactions(newTransactionData);
+          } catch (error) {
+            console.error(
+              `Could not update transaction "${transaction.id}". Error:`,
+              error
+            );
+          }
+        }
+      } else {
+        console.error("No such category found.");
+      }
+    } catch (error) {
+      console.error("Could not fetch categories. Error:", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="categories">Add to Category</label>
-      <select name="categories" id="categories">
-        {props.categoryType === "expenses" ? (
-          categories.expenseCategories.length > 0 ? (
-            categories.expenseCategories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))
-          ) : (
-            <option>No Categories found</option>
-          )
-        ) : props.categoryType === "income" ? (
-          categories.incomeCategories.length > 0 ? (
-            categories.incomeCategories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))
-          ) : (
-            <option>No Categories found</option>
-          )
-        ) : (
-          <option>No Categories found</option>
-        )}
-      </select>
-      <button type="submit">{props.changeCategory ? "Change" : "Add"}</button>
-    </form>
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {props.categoryType === "expenses" ? (
+                          categories.expenseCategories.length > 0 ? (
+                            categories.expenseCategories.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="None">
+                              No Categories found
+                            </SelectItem>
+                          )
+                        ) : props.categoryType === "income" ? (
+                          categories.incomeCategories.length > 0 ? (
+                            categories.incomeCategories.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="None">
+                              No Categories found
+                            </SelectItem>
+                          )
+                        ) : (
+                          <SelectItem value="None">
+                            No Categories found
+                          </SelectItem>
+                        )}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">
+            {props.changeCategory ? "Change" : "Add"}
+          </Button>
+        </form>
+      </Form>
+    </>
   );
 }

@@ -1,11 +1,13 @@
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "./firebase";
+import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 
-const {addDoc, collection} = require("firebase/firestore");
-const { db } = require('@/lib/firebase');
+
 
 export const createAccount = async (accountName: string,startAmount:number) => {
 
     try {
-          await addDoc(collection(db,"accounts"), {
+          await addDoc(collection(db,COLLECTION_NAMES.ACCOUNTS), {
             name: accountName,
             amount: startAmount
          })

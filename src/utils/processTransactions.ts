@@ -1,65 +1,119 @@
-import { Category, Transaction } from "@/types/transactions";
 import { removeFirstAndLastChar } from "./removeFirstAndLastChar";
 import { checkDescription } from "./checkDescription";
 import { v4 as uuidv4 } from "uuid";
-import { getAccounts } from "@/lib/getAccounts";
 import { createAccount } from "@/lib/createAccount";
-import { getCategories } from "@/lib/getCategories";
-import { useGetCategories } from "@/hooks/useGetCategories";
-import { Account } from "@/types/account";
+import { getAccountReferenceByName } from "@/lib/getAccountReferenceByName";
+import { DocumentReference } from "firebase/firestore";
+import { getCategoryReferenceByName } from "@/lib/categories/getCategoryReferenceByName";
+import { Category, Transaction } from "@/types/transactionsType";
+import { getDefaultCategoryReference } from "@/lib/categories/getDefaultCategoryRef";
+import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 
-interface Categories  {
+interface Categories {
   incomeCategories: Category[];
   expenseCategories: Category[];
 }
 
-export const processTransactions = async (text:string,categories: Categories,onShowNewAccountForm: (accountName: string) => Promise<number>): Promise<Transaction[]> => {
-  console.log("Försöker process transactions i processTransactions")
-  
-    if(!text || categories.expenseCategories.length === 0 || categories.incomeCategories.length === 0){
-        return [];
-    }
-    
-    const transactionLines = text?.split(`\n`);
-    if (transactionLines.length < 3) {
-      console.error('Not enough lines in the text');
-      return [];
-    }
-    //Remove title lines
-    transactionLines.shift();
-    transactionLines.shift();
-    let accounts = await getAccounts();
-    const newTransactions: Transaction[] = [];
-    for (const transaction of transactionLines){
+export const processTransactions = async (
+  text: string,
+  categories: Categories,
+  onShowNewAccountForm: (accountName: string) => Promise<number>
+): Promise<Transaction[]> => {
+  console.log("Försöker process transactions i processTransactions");
+  console.log("Categories: ", categories);
+  if (
+    !text ||
+    categories.expenseCategories.length === 0 ||
+    categories.incomeCategories.length === 0
+  ) {
+    console.error("Invalid input data");
+    return [];
+  }
 
-      const splitedTransaction = transaction.split(",");
-      if (splitedTransaction.length > 1) {
-        const accountName = removeFirstAndLastChar( splitedTransaction[3]);
-        const description = removeFirstAndLastChar(splitedTransaction[9]);  
-        const amount = Number(splitedTransaction[10]);
-        
-        const transactionCategory = amount>0 ? checkDescription(categories.incomeCategories,description) : checkDescription(categories.expenseCategories,description);
-        if(!accounts.find((account) => account.name === accountName)){
-          const startAmount = await onShowNewAccountForm(accountName);
-          await createAccount(accountName,startAmount);
-          accounts = [...accounts, { id:"",  name: accountName, amount: startAmount }];
+  const transactionLines = text?.split(`\n`);
+  if (transactionLines.length < 3) {
+    console.error("Not enough lines in the text");
+    return [];
+  }
+  //Remove title lines
+  transactionLines.shift();
+  transactionLines.shift();
+
+  const newTransactions: Transaction[] = [];
+  for (const transaction of transactionLines) {
+    const splitedTransaction = transaction.split(",");
+    if (splitedTransaction.length > 1) {
+      const accountName = removeFirstAndLastChar(splitedTransaction[3]);
+      const description = removeFirstAndLastChar(splitedTransaction[9]);
+      const amount = Number(splitedTransaction[10]);
+
+      const transactionCategory =
+        amount > 0
+          ? checkDescription(categories.incomeCategories, description)
+          : checkDescription(categories.expenseCategories, description);
+
+      let accountRef = await getAccountReferenceByName(accountName);
+      if (!accountRef) {
+        const startAmount = await onShowNewAccountForm(accountName);
+        await createAccount(accountName, startAmount);
+        accountRef = await getAccountReferenceByName(accountName);
+        if (!accountRef) {
+          console.error("Failed to create or retrieve account", accountName);
         }
-        newTransactions.push( {
-          id: uuidv4(),
-          account: accountName,
-          date: new Date(splitedTransaction[6]),
-          description: description,
-          amount: amount,
-          category: transactionCategory? transactionCategory.name : "No Category"
-        })   
-        
+        console.log("Created an account named ", accountName);
       } else {
-        console.log("splitted transaction is empty");
+        console.log("Account already exists with name", accountName);
+      }
 
+      let categoryRefToAdd: DocumentReference<Category>;
+      const collectionName =
+        amount < 0
+          ? COLLECTION_NAMES.EXPENSES_CATEGORIES
+          : COLLECTION_NAMES.INCOME_CATEGORIES;
+      console.log("Collection name:", collectionName);
+      try {
+        if (transactionCategory) {
+          console.log(
+            "Transaction Category var inte empty",
+            transactionCategory
+          );
+          const ref = await getCategoryReferenceByName(
+            transactionCategory.name,
+            collectionName
+          );
+
+          categoryRefToAdd =
+            ref || (await getDefaultCategoryReference(collectionName));
+        } else {
+            categoryRefToAdd = await getDefaultCategoryReference(
+              collectionName
+            );
+        }
+
+        console.log("Category reference", categoryRefToAdd);
+
+        if (accountRef && categoryRefToAdd) {
+          console.log("Creating new transaction");
+
+          newTransactions.push({
+            id: uuidv4(),
+            account: accountRef,
+            date: new Date(splitedTransaction[6]),
+            description: description,
+            type: amount > 0 ? "income" : "expense",
+            amount: amount,
+            category: categoryRefToAdd,
+          });
+        } else {
+          console.error("Could not find the account or category reference");
+        }
+      } catch (error) {
+        console.error(
+          "An error occurred while processing the transaction:",
+          error
+        );
       }
     }
-    
-      return newTransactions
-
-}
-
+  }
+  return newTransactions;
+};

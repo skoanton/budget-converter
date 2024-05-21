@@ -1,7 +1,6 @@
 const { db } = require('@/lib/firebase');
-import { Category } from "@/types/transactions";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-
+const { doc, getDoc, updateDoc } = require('firebase/firestore');
+import { Category } from "@/types/transactionsType";
 import { useCallback, useEffect } from "react";
 
 export const useAddDescriptionToCategory = () => {
@@ -26,6 +25,5 @@ export const useAddDescriptionToCategory = () => {
         console.error('Error updating document: ', error);
       }
     }, []);
-  
     return addDescriptionToCategory;
   };

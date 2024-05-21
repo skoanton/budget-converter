@@ -1,5 +1,7 @@
-import { getCategories } from "@/lib/getCategories";
-import { Category } from "@/types/transactions";
+
+import { COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { getCategories } from "@/lib/categories/getCategories";
+import { Category } from "@/types/transactionsType";
 import { useEffect, useState } from "react";
 
 interface Categories {
@@ -7,14 +9,14 @@ interface Categories {
   expenseCategories: Category[];
 }
 export const useGetCategories = (): Categories => {
-  console.log("kör useGetcategories");
+
     const [incomeCategories,setIncomeCategories]= useState<Category[]>([]);
     const [expenseCategories,setExpensCategories]= useState<Category[]>([]);
     useEffect(() => {
         const fetchCategories = async () => {
           try {
-            const fetchedIncomeCategories = await getCategories("income_categories");
-            const fetchedExpenseCategories = await getCategories("expenses_categories");
+            const fetchedIncomeCategories = await getCategories(COLLECTION_NAMES.INCOME_CATEGORIES);
+            const fetchedExpenseCategories = await getCategories(COLLECTION_NAMES.EXPENSES_CATEGORIES);
             if (fetchedIncomeCategories && fetchedExpenseCategories ) {
               setIncomeCategories(fetchedIncomeCategories);
               setExpensCategories(fetchedExpenseCategories);

@@ -8,7 +8,8 @@ const categories = [
     "Extra",
     "Lön",
     "Skatteåterbäring",
-    "CSN"
+    "CSN",
+    "Egna konton"
   ];
 
 

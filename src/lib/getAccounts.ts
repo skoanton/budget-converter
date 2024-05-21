@@ -1,31 +1,26 @@
+import { getDocs, collection, doc, DocumentReference } from "firebase/firestore";
+import { db } from "./firebase";
+import { Account } from "@/types/accountType";
+import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 
-const { db } = require('@/lib/firebase');
-import { Account } from "@/types/account";
-const {collection, getDocs } = require('firebase/firestore');
-export const getAccounts = async (): Promise<Account[]> => {
+export const getAccounts = async (): Promise<DocumentReference<Account>[]> => {
 
     try {
-        const accountSnapshot = await getDocs(collection(db,"accounts"));
+        const accountSnapshot = await getDocs(collection(db,COLLECTION_NAMES.ACCOUNTS));
 
         if(accountSnapshot.empty){
             console.log("No accounts");
             return [];
         }
-
-         const accountData = accountSnapshot.docs.map((doc:any) => {
-            const data = doc.data();
-            return{
-                id: doc.id,
-                name: data.name,
-                amount: data.amount,
-            } as Account
-         })
-         return accountData;       
+        const accountRefs = accountSnapshot.docs.map((accountDoc)=> {
+            return doc(db,`${COLLECTION_NAMES.ACCOUNTS}/${accountDoc.id}`) as DocumentReference<Account>
+        })
+        
+        return accountRefs;
 
     } catch (error) {
-        console.log("Could not fetch accounts:", error);
+        console.error("Could not fetch accounts:", error);
         return [];
     }
-
 
 }
