@@ -3,7 +3,7 @@ import { DocumentReference, collection, doc, getDoc, setDoc } from "firebase/fir
 import { db } from "../firebase";
 
 export async function getDefaultCategoryReference(collectionName:string): Promise<DocumentReference<Category>> {
-    const defaultCategoryRef = doc(collection(db, collectionName), "default");
+    const defaultCategoryRef = doc(collection(db, collectionName), `default_${collectionName}`);
     try {
         const docSnap = await getDoc(defaultCategoryRef);
         if (!docSnap.exists()) {

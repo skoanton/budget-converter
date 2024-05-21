@@ -2,6 +2,7 @@
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 import { getCategories } from "@/lib/categories/getCategories";
 import { Category } from "@/types/transactionsType";
+import { sortCategory } from "@/utils/sortCategory";
 import { useEffect, useState } from "react";
 
 interface Categories {
@@ -15,11 +16,13 @@ export const useGetCategories = (): Categories => {
     useEffect(() => {
         const fetchCategories = async () => {
           try {
-            const fetchedIncomeCategories = await getCategories(COLLECTION_NAMES.INCOME_CATEGORIES);
-            const fetchedExpenseCategories = await getCategories(COLLECTION_NAMES.EXPENSES_CATEGORIES);
-            if (fetchedIncomeCategories && fetchedExpenseCategories ) {
-              setIncomeCategories(fetchedIncomeCategories);
-              setExpensCategories(fetchedExpenseCategories);
+            const {expenseCategories,incomeCategories} = await getCategories();
+            console.log("Expensecategories inne i use:", expenseCategories);
+            if (expenseCategories && incomeCategories ) {
+              const sortredIncomeCategories = sortCategory(incomeCategories);
+              const sortredExpensCategories = sortCategory(expenseCategories);
+              setIncomeCategories(sortredIncomeCategories);
+              setExpensCategories(sortredExpensCategories);
             } else {
               console.log("Could not get cateogires");
             }

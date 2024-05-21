@@ -14,4 +14,6 @@ export type Category = {
     id: string,
     name: string,
     description: string,
+    spentAmount: number,
+    budgetLimit:  number,
 }

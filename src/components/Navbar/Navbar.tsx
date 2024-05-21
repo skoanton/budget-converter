@@ -13,7 +13,9 @@ export default function Navbar() {
         <li>
           <Link href="/transactions">Transaktioner</Link>
         </li>
-        <li>Budget</li>
+        <li>
+          <Link href="/budget">Budget</Link>
+        </li>
         <li>
           <Link href="/accounts">Accounts</Link>
         </li>

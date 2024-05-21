@@ -46,14 +46,14 @@ type CategoryFormBaseProps = {
 type CategoryFormChangeProps = {
   changeCategory: true;
   transaction: Transaction;
-  categoryType: "expenses" | "income";
+  categoryType: string;
 };
 
 type CategoryFormAddProps = {
   addCategory: true;
   transaction: Transaction;
   transactions: Transaction[];
-  categoryType: "expenses" | "income";
+  categoryType: string;
   onHandleUpdateTransactions: (
     newCategorizedTransactions: Transaction[]
   ) => void;
@@ -84,8 +84,8 @@ export default function CategoryForm(props: CategoryFormProps) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     handleSubmit(values.category);
   }
-  const categories = useGetCategories();
-
+  const { expenseCategories, incomeCategories } = useGetCategories();
+  console.log("Expense Categoires after hämting:", expenseCategories);
   const fetchCategory = async (
     inputCategory: string
   ): Promise<{
@@ -215,9 +215,10 @@ export default function CategoryForm(props: CategoryFormProps) {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {props.categoryType === "expenses" ? (
-                          categories.expenseCategories.length > 0 ? (
-                            categories.expenseCategories.map((category) => (
+                        {props.categoryType ===
+                        COLLECTION_NAMES.EXPENSES_CATEGORIES ? (
+                          expenseCategories.length > 0 ? (
+                            expenseCategories.map((category) => (
                               <SelectItem key={category.id} value={category.id}>
                                 {category.name}
                               </SelectItem>
@@ -227,9 +228,10 @@ export default function CategoryForm(props: CategoryFormProps) {
                               No Categories found
                             </SelectItem>
                           )
-                        ) : props.categoryType === "income" ? (
-                          categories.incomeCategories.length > 0 ? (
-                            categories.incomeCategories.map((category) => (
+                        ) : props.categoryType ===
+                          COLLECTION_NAMES.INCOME_CATEGORIES ? (
+                          incomeCategories.length > 0 ? (
+                            incomeCategories.map((category) => (
                               <SelectItem key={category.id} value={category.id}>
                                 {category.name}
                               </SelectItem>

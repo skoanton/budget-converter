@@ -42,11 +42,14 @@ export default function TransactionCard({ transaction }: TransactionCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{category.name}</CardTitle>
-        <CardDescription>{account.name}</CardDescription>
+        <CardTitle>{category?.name}</CardTitle>
+        <CardDescription>{account?.name}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Description: {transaction.description}</p>
+        <p>
+          Description:{" "}
+          <span className="font-bold"> {transaction.description}</span>
+        </p>
         <p> Amount: {transaction.amount}</p>
       </CardContent>
       <CardFooter>

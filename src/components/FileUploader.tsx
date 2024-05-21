@@ -90,8 +90,8 @@ export default function FileUploader() {
     return <div>{error}</div>;
   }
   return (
-    <section className="w-full h-full flex flex-col items-center gap-2">
-      <div>
+    <section className="w-full h-full flex flex-col gap-2">
+      <div className="flex justify-center flex-col gap-2 items-center">
         <form>
           <Input
             type="file"

@@ -1,3 +1,4 @@
+import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 import CategoryForm from "../CategoryForm/CategoryForm";
 import { useGetAccountRef } from "@/hooks/useGetAccountRef";
 import { useGetCategoryRef } from "@/hooks/useGetCategoryRef";
@@ -45,7 +46,11 @@ export default async function TransactionDetails({
         <li>{transaction.date.toDateString()}</li>
       </ul>
       <CategoryForm
-        categoryType={`${transaction.amount < 0 ? "expenses" : "income"}`}
+        categoryType={`${
+          transaction.amount < 0
+            ? COLLECTION_NAMES.EXPENSES_CATEGORIES
+            : COLLECTION_NAMES.INCOME_CATEGORIES
+        }`}
         changeCategory={true}
         transaction={transaction}
       />

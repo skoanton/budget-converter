@@ -1,7 +1,6 @@
-import { DocumentReference, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import {doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { Category } from "@/types/transactionsType";
-
 
 export const getCategoryById = async (categoryId:string,collectionName:string):Promise<Category | null> => {
     try {
@@ -14,7 +13,9 @@ export const getCategoryById = async (categoryId:string,collectionName:string):P
             const categoryToReturn: Category = {
                 id: categorySnapshot.id,
                 name: categoryData.name,
-                description: categoryData.description
+                description: categoryData.description,
+                spentAmount: categoryData.spentAmount,
+                budgetLimit: categoryData.budgetLimit
             }
 
             return categoryToReturn
@@ -25,12 +26,9 @@ export const getCategoryById = async (categoryId:string,collectionName:string):P
             return null;
         }
 
-
     } catch (error) {
         console.error("Could not fetch category by name:", error);
         return null;
     }
-
-
 
 }

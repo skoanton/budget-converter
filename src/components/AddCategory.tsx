@@ -4,6 +4,7 @@ import React, { Fragment, useState } from "react";
 import CategoryForm from "./CategoryForm/CategoryForm";
 import TransactionCard from "./Transactioncard/TransactionCard";
 import { Transaction } from "@/types/transactionsType";
+import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 
 type AddCategoryProps = {
   transactions: Transaction[];
@@ -22,11 +23,16 @@ export default function AddCategory({
       {transactions.map((transaction, index) => {
         return (
           currentForm === index && (
-            <div key={transaction.account.id}>
+            <div
+              key={transaction.id}
+              className="flex flex-col justify-center items-center"
+            >
               <TransactionCard key={transaction.id} transaction={transaction} />
               <CategoryForm
                 categoryType={`${
-                  transaction.amount > 0 ? "income" : "expenses"
+                  transaction.amount < 0
+                    ? COLLECTION_NAMES.EXPENSES_CATEGORIES
+                    : COLLECTION_NAMES.INCOME_CATEGORIES
                 }`}
                 addCategory={true}
                 transaction={transaction}
