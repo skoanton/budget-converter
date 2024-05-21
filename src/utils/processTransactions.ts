@@ -19,8 +19,6 @@ export const processTransactions = async (
   categories: Categories,
   onShowNewAccountForm: (accountName: string) => Promise<number>
 ): Promise<Transaction[]> => {
-  console.log("Försöker process transactions i processTransactions");
-  console.log("Categories: ", categories);
   if (
     !text ||
     categories.expenseCategories.length === 0 ||
@@ -60,11 +58,7 @@ export const processTransactions = async (
         if (!accountRef) {
           console.error("Failed to create or retrieve account", accountName);
         }
-        console.log("Created an account named ", accountName);
-      } else {
-        console.log("Account already exists with name", accountName);
-      }
-
+      } 
       let categoryRefToAdd: DocumentReference<Category>;
       const collectionName =
         amount < 0
@@ -73,10 +67,6 @@ export const processTransactions = async (
       console.log("Collection name:", collectionName);
       try {
         if (transactionCategory) {
-          console.log(
-            "Transaction Category var inte empty",
-            transactionCategory
-          );
           const ref = await getCategoryReferenceByName(
             transactionCategory.name,
             collectionName
@@ -90,11 +80,8 @@ export const processTransactions = async (
             );
         }
 
-        console.log("Category reference", categoryRefToAdd);
 
         if (accountRef && categoryRefToAdd) {
-          console.log("Creating new transaction");
-
           newTransactions.push({
             id: uuidv4(),
             account: accountRef,

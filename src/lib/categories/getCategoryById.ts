@@ -4,14 +4,12 @@ import { Category } from "@/types/transactionsType";
 
 
 export const getCategoryById = async (categoryId:string,collectionName:string):Promise<Category | null> => {
-    console.log("Categoryid:",categoryId);
     try {
 
         const categoryRef = doc(db,collectionName, categoryId);
         const categorySnapshot = await getDoc(categoryRef);
 
         if(categorySnapshot.exists()){
-            console.log(`Category found`);
             const categoryData = categorySnapshot.data();
             const categoryToReturn: Category = {
                 id: categorySnapshot.id,

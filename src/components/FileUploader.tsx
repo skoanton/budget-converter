@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/card";
 import TransactionCard from "./Transactioncard/TransactionCard";
 import { Transaction } from "@/types/transactionsType";
+import { Loader } from "lucide-react";
 
 export default function FileUploader() {
   const [text, setText] = useState("");
@@ -99,6 +100,12 @@ export default function FileUploader() {
             onChange={handleFileChange}
           />
         </form>
+
+        {loading && (
+          <div className="flex justify-center items-center">
+            <Loader className="animate-spin" />
+          </div>
+        )}
       </div>
       <section className="grid grid-cols-5 gap-3">
         {processedTransactions.map((transaction) => {
@@ -109,20 +116,29 @@ export default function FileUploader() {
       </section>
       {uncategorizedTransactions.length > 0 ? (
         <section>
-          <h2 className="text-xl font-bold">Transactions without categories</h2>
+          <h2 className="text-2xl font-bold">
+            Transactions without categories
+          </h2>
           <AddCategory
             transactions={uncategorizedTransactions}
             onHandleUpdateTransactions={handleUpdateTransactions}
           />
         </section>
       ) : (
-        <Button onClick={() => uploadTransactions(processedTransactions)}>
-          Upload to database
-        </Button>
+        uncategorizedTransactions.length <= 0 &&
+        text.length > 0 &&
+        !loading && (
+          <Button
+            size={"lg"}
+            onClick={() => uploadTransactions(processedTransactions)}
+          >
+            Upload to database
+          </Button>
+        )
       )}
+
       {newTransaction && newAccountInfo && (
         <>
-          <div>Detta ska synas nu</div>
           <CreateNewAccountForm
             onSubmit={handleNewAccountSubmit}
             accountName={newAccountInfo.name}
