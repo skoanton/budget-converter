@@ -5,7 +5,7 @@ import { db } from "./firebase";
 import { Account } from "@/types/accountType";
 
 
-export const getCategoryById = async (accountId:string,):Promise<Account | null> => {
+export const getAccountById = async (accountId:string,):Promise<Account | null> => {
     console.log("Categoryid:",accountId);
     try {
 

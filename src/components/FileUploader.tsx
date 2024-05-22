@@ -23,9 +23,9 @@ import { Loader } from "lucide-react";
 
 export default function FileUploader() {
   const [text, setText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const {
     processTextTransactions,
-    loading,
     error,
     newTransaction,
     handleNewAccountSubmit,
@@ -58,6 +58,7 @@ export default function FileUploader() {
   useEffect(() => {
     if (text) {
       const processTransactionsFromText = async () => {
+        setIsLoading(true);
         const allTransactions = await processTextTransactions(text);
         const categorizedTransactions = await extractCategorizedTransactions(
           allTransactions
@@ -65,7 +66,7 @@ export default function FileUploader() {
         setProcessedTransactions(categorizedTransactions);
         const uncategorizedTransactions =
           await extractUncategorizedTransactions(allTransactions);
-
+        setIsLoading(false);
         setUncategorizedTransactions(uncategorizedTransactions);
       };
 
@@ -101,12 +102,13 @@ export default function FileUploader() {
           />
         </form>
 
-        {loading && (
+        {isLoading && (
           <div className="flex justify-center items-center">
             <Loader className="animate-spin" />
           </div>
         )}
       </div>
+
       <section className="grid grid-cols-5 gap-3">
         {processedTransactions.map((transaction) => {
           return (
@@ -127,13 +129,15 @@ export default function FileUploader() {
       ) : (
         uncategorizedTransactions.length <= 0 &&
         text.length > 0 &&
-        !loading && (
-          <Button
-            size={"lg"}
-            onClick={() => uploadTransactions(processedTransactions)}
-          >
-            Upload to database
-          </Button>
+        !isLoading && (
+          <div className="flex justify-center">
+            <Button
+              size={"lg"}
+              onClick={() => uploadTransactions(processedTransactions)}
+            >
+              Upload to database
+            </Button>
+          </div>
         )
       )}
 

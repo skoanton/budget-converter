@@ -1,14 +1,22 @@
+"use client";
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 import CategoryForm from "../CategoryForm/CategoryForm";
 import { useGetAccountRef } from "@/hooks/useGetAccountRef";
 import { useGetCategoryRef } from "@/hooks/useGetCategoryRef";
 import { Transaction } from "@/types/transactionsType";
-
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 type TransactionDetailsProps = {
   transaction: Transaction;
 };
 
-export default async function TransactionDetails({
+export default function TransactionDetails({
   transaction,
 }: TransactionDetailsProps) {
   const {
@@ -37,23 +45,32 @@ export default async function TransactionDetails({
 
   return (
     <>
-      <ul>
-        <li>{transaction.id}</li>
-        <li>{category?.name}</li>
-        <li>{account?.name}</li>
-        <li>{transaction.amount}</li>
-        <li>{transaction.description}</li>
-        <li>{transaction.date.toDateString()}</li>
-      </ul>
-      <CategoryForm
-        categoryType={`${
-          transaction.amount < 0
-            ? COLLECTION_NAMES.EXPENSES_CATEGORIES
-            : COLLECTION_NAMES.INCOME_CATEGORIES
-        }`}
-        changeCategory={true}
-        transaction={transaction}
-      />
+      <Card>
+        <CardHeader>
+          <CardTitle>{category?.name}</CardTitle>
+          <CardDescription>{transaction.description}</CardDescription>
+          <CardDescription>{account?.name}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ul>
+            <li className="font-bold">{transaction.amount} kr</li>
+            <li className="font-bold">
+              {transaction.date.toLocaleDateString()}
+            </li>
+          </ul>
+        </CardContent>
+        <CardFooter>
+          <CategoryForm
+            categoryType={`${
+              transaction.amount < 0
+                ? COLLECTION_NAMES.EXPENSES_CATEGORIES
+                : COLLECTION_NAMES.INCOME_CATEGORIES
+            }`}
+            changeCategory={true}
+            transaction={transaction}
+          />
+        </CardFooter>
+      </Card>
     </>
   );
 }

@@ -9,7 +9,6 @@ import { Transaction } from "@/types/transactionsType";
 
 export const useProcessTransactions = ()  => {
   const categories = useGetCategories();
-  const [loading,setLoading] = useState<boolean>(false);
   const [error,setError] = useState<string | null>(null);
   const [newTransaction,setNewTransaction] = useState<boolean>(false);
   const [newAccountInfo,setNewAccountInfo] = useState<Account | null>(null);
@@ -34,21 +33,21 @@ export const useProcessTransactions = ()  => {
 
     const processTextTransactions = useCallback(
       async(text:string): Promise<Transaction[]> => {
-          setLoading(true);
+         
           setError(null);
           try {
               const transactions = await processTransactions(text,categories,showNewAccountForm)
-              setLoading(false);
+              
               return transactions;
             
           } catch (error) {
             setError("Error processing transactions");
-            setLoading(false);
+           ;
             return [];  
           }
       },
       [categories,showNewAccountForm]      
     );
 
-    return { processTextTransactions, loading, error, newTransaction, handleNewAccountSubmit, newAccountInfo };
+    return { processTextTransactions, error, newTransaction, handleNewAccountSubmit, newAccountInfo };
 };

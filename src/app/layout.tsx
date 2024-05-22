@@ -26,7 +26,7 @@ export default function RootLayout({
         )}
       >
         <Navbar />
-        <main className="w-screen px-4">{children}</main>
+        <main className="w-screen p-4">{children}</main>
       </body>
     </html>
   );
