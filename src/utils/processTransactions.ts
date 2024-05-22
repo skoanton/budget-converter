@@ -8,6 +8,7 @@ import { getCategoryReferenceByName } from "@/lib/categories/getCategoryReferenc
 import { Category, Transaction } from "@/types/transactionsType";
 import { getDefaultCategoryReference } from "@/lib/categories/getDefaultCategoryRef";
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { useGetCategories } from "@/hooks/useGetCategories";
 
 interface Categories {
   incomeCategories: Category[];
@@ -25,7 +26,6 @@ export const processTransactions = async (
     console.error("Invalid input data");
     return [];
   }
-
   const transactionLines = text?.split(`\n`);
   if (transactionLines.length < 3) {
     console.error("Not enough lines in the text");
