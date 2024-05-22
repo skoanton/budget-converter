@@ -12,11 +12,11 @@ export default function CreateBudgetCard({
 }: CreateBudgetCardProps) {
   return (
     <>
-      <Card>
-        <CardHeader>
+      <Card className="flex justify-center items-center">
+        {/*   <CardHeader>
           <CardTitle>Create a new category</CardTitle>
-        </CardHeader>
-        <CardContent className="flex justify-center">
+        </CardHeader> */}
+        <CardContent>
           <CreateBudgetCategoryModal collectionName={collectionName} />
         </CardContent>
       </Card>

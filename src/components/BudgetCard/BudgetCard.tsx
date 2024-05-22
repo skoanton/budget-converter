@@ -5,6 +5,7 @@ import Link from "next/link";
 import { deleteCategory } from "@/lib/categories/deleteCategory";
 import { Button } from "../ui/button";
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { Trash2 } from "lucide-react";
 type BudgetCardProps = {
   category: Category;
   collectionName: string;
@@ -27,9 +28,11 @@ export default function BudgetCard({
   return (
     <>
       <Card>
-        <CardHeader>
+        <CardHeader className=" flex-row justify-between items-center">
           <CardTitle>{category.name}</CardTitle>
-          <Button onClick={handleDelete}>Delete category</Button>
+          <Button variant={"ghost"} onClick={handleDelete}>
+            <Trash2 />
+          </Button>
         </CardHeader>
         <Link href={`budget/${category.id}`}>
           <CardContent>
