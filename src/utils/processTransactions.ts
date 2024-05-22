@@ -20,9 +20,7 @@ export const processTransactions = async (
   onShowNewAccountForm: (accountName: string) => Promise<number>
 ): Promise<Transaction[]> => {
   if (
-    !text ||
-    categories.expenseCategories.length === 0 ||
-    categories.incomeCategories.length === 0
+    !text
   ) {
     console.error("Invalid input data");
     return [];

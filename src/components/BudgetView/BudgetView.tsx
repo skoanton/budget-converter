@@ -6,6 +6,8 @@ import { deleteAllCategories } from "@/lib/categories/deleteAllCategories";
 import { useGetCategories } from "@/hooks/useGetCategories";
 import BudgetCard from "../BudgetCard/BudgetCard";
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { useEffect, useState } from "react";
+import { Category } from "@/types/transactionsType";
 
 type BudgetViewProps = {
   title: string;
@@ -14,7 +16,8 @@ type BudgetViewProps = {
 
 export default function BudgetView({ title, collectionName }: BudgetViewProps) {
   const { expenseCategories, incomeCategories } = useGetCategories();
-
+  console.log("ExpenseCategories i budgetview:", expenseCategories);
+  console.log("IncomeCategories i budgetview:", incomeCategories);
   return (
     <>
       <section>
