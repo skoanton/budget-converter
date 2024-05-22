@@ -21,12 +21,12 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "h-screen w-screen flex bg-background font-sans antialiased",
+          "h-screen flex bg-background font-sans antialiased",
           fontSans.variable
         )}
       >
         <Navbar />
-        <main className="w-full">{children}</main>
+        <main className="w-screen px-4">{children}</main>
       </body>
     </html>
   );
