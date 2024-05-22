@@ -5,18 +5,48 @@ import Link from "next/link";
 import TransactionRow from "./TransactionRow";
 import { useEffect, useState } from "react";
 import { getTransactions } from "@/lib/getTransactions";
+import { getTransactionsByAccount } from "@/lib/transactions/getTransactionsByAccount";
 
-export default function TransactionTable() {
+type BaseTransactionTableProps = {
+  allTransactions: boolean;
+};
+
+type AccountTransactionTableProps = {
+  allTransactions: false;
+  accountId: string;
+};
+
+type AllTransactionsTableProps = {
+  allTransactions: true;
+};
+
+type TransactionTableProps = BaseTransactionTableProps &
+  (AccountTransactionTableProps | AllTransactionsTableProps);
+
+export default function TransactionTable(props: TransactionTableProps) {
   const [transactions, setTransations] = useState<Transaction[]>([]);
+
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const fetchAllTransactions = async () => {
       const fetchedTransaction = await getTransactions();
       if (fetchedTransaction) {
         setTransations(fetchedTransaction);
       }
     };
-    fetchTransactions();
-  }, []);
+
+    const fetchAccountTransactions = async (accountId: string) => {
+      const fetchedTransaction = await getTransactionsByAccount(accountId);
+      if (fetchedTransaction) {
+        setTransations(fetchedTransaction);
+      }
+    };
+
+    if (props.allTransactions) {
+      fetchAllTransactions();
+    } else {
+      fetchAccountTransactions(props.accountId);
+    }
+  }, [props.allTransactions]);
 
   return (
     <>

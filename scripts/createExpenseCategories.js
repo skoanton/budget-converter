@@ -23,6 +23,7 @@ const categories = [
     "Presenter",
     "Shopping",
     "Spel/Böcker",
+    "Egna konton",
     "Streaming/Tjänster",
     "Swish",
     "Tobak",
