@@ -4,9 +4,7 @@ import { db } from "../firebase";
 
 
 export const addDescriptionToCategory = async (description: string,category: Category,collectionName:string) => {
-  console.log("Collection Name:", collectionName);
-console.log("Category ID:", category.id);
-console.log("Category:", category);
+
     try {
         const categoryDocRef = doc(db, collectionName, category.id);
         const categoryDocSnap = await getDoc(categoryDocRef);

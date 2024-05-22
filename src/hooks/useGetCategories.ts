@@ -10,7 +10,6 @@ interface Categories {
   expenseCategories: Category[];
 }
 export const useGetCategories = (): Categories => {
-    console.log("Using get categories");
     const [incomeCategories,setIncomeCategories]= useState<Category[]>([]);
     const [expenseCategories,setExpensCategories]= useState<Category[]>([]);
     useEffect(() => {

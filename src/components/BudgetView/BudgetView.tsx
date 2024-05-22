@@ -1,6 +1,5 @@
 "use client";
 import CreateBudgetCard from "../BudgetCard/CreateBudgetCard";
-import { getCategories } from "@/lib/categories/getCategories";
 import { Button } from "../ui/button";
 import { deleteAllCategories } from "@/lib/categories/deleteAllCategories";
 import { useGetCategories } from "@/hooks/useGetCategories";

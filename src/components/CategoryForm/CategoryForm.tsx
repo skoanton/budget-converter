@@ -85,7 +85,7 @@ export default function CategoryForm(props: CategoryFormProps) {
     handleSubmit(values.category);
   }
   const { expenseCategories, incomeCategories } = useGetCategories();
-  console.log("Expense Categoires after hämting:", expenseCategories);
+
   const fetchCategory = async (
     inputCategory: string
   ): Promise<{
@@ -158,10 +158,16 @@ export default function CategoryForm(props: CategoryFormProps) {
               currentCategory,
               currentCollectionName
             );
-            const newCategorizedTransactions = transactions.filter(
-              (trans) => trans.description === transaction.description
+            const newCategorizedTransactions = transactions.filter((trans) => {
+              return (
+                trans.description === transaction.description &&
+                Math.sign(trans.amount) === Math.sign(transaction.amount) // Lägger bara till descriptions med samma value (+ eller -)
+              );
+            });
+            console.log(
+              "New Categoriezed transactions:",
+              newCategorizedTransactions
             );
-
             newCategorizedTransactions.forEach((trans) => {
               trans.category = currentCategoryRef;
             });
