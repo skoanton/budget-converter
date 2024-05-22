@@ -32,13 +32,16 @@ export default function BudgetCard({
               Spent:{" "}
               <span className="font-normal">
                 {" "}
-                {category.spentAmount}/{category.budgetLimit}
+                {Math.round(Math.abs(category.spentAmount))}/
+                {category.budgetLimit} kr
               </span>
             </p>
             <p className="font-bold">
               Budget Left:{" "}
               <span className="font-normal">
-                {category.budgetLimit - category.spentAmount}
+                {category.budgetLimit -
+                  Math.round(Math.abs(category.spentAmount))}{" "}
+                kr
               </span>
             </p>
           </CardContent>
