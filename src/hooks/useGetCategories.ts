@@ -17,15 +17,17 @@ export const useGetCategories = (): Categories => {
         const fetchCategories = async () => {
           try {
             const {expenseCategories,incomeCategories} = await getCategories();
-            console.log("Expensecategories inne i use:", expenseCategories);
-            if (expenseCategories && incomeCategories ) {
-              const sortredIncomeCategories = sortCategory(incomeCategories);
-              const sortredExpensCategories = sortCategory(expenseCategories);
-              setIncomeCategories(sortredIncomeCategories);
-              setExpensCategories(sortredExpensCategories);
-            } else {
-              console.log("Could not get cateogires");
+            
+            if (expenseCategories){
+             
+              setExpensCategories(expenseCategories);
+            } 
+            if(incomeCategories ) {
+             
+              setIncomeCategories(incomeCategories); 
             }
+            
+
           } catch (error) {
             console.error("Error fetching categories:", error);
           }

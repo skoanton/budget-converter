@@ -20,26 +20,33 @@ export default function BudgetView({ title, collectionName }: BudgetViewProps) {
       <section>
         <h2 className="text-3xl font-bold">{title}</h2>
         <div className="grid grid-cols-5 gap-2">
-          <CreateBudgetCard />
-
-          {collectionName === COLLECTION_NAMES.EXPENSES_CATEGORIES
-            ? expenseCategories.map((expenseCategory) => {
-                return (
-                  <BudgetCard
-                    key={expenseCategory.id}
-                    category={expenseCategory}
-                  />
-                );
-              })
-            : collectionName === COLLECTION_NAMES.INCOME_CATEGORIES &&
-              incomeCategories.map((incomeCategory) => {
-                return (
-                  <BudgetCard
-                    key={incomeCategory.id}
-                    category={incomeCategory}
-                  />
-                );
-              })}
+          {collectionName === COLLECTION_NAMES.EXPENSES_CATEGORIES ? (
+            <>
+              <CreateBudgetCard
+                collectionName={COLLECTION_NAMES.EXPENSES_CATEGORIES}
+              />
+              {expenseCategories.map((expenseCategory) => (
+                <BudgetCard
+                  key={expenseCategory.id}
+                  category={expenseCategory}
+                  collectionName={collectionName}
+                />
+              ))}
+            </>
+          ) : collectionName === COLLECTION_NAMES.INCOME_CATEGORIES ? (
+            <>
+              <CreateBudgetCard
+                collectionName={COLLECTION_NAMES.INCOME_CATEGORIES}
+              />
+              {incomeCategories.map((incomeCategory) => (
+                <BudgetCard
+                  key={incomeCategory.id}
+                  category={incomeCategory}
+                  collectionName={collectionName}
+                />
+              ))}
+            </>
+          ) : null}
         </div>
       </section>
     </>

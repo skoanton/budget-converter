@@ -9,7 +9,9 @@ export async function getDefaultCategoryReference(collectionName:string): Promis
         if (!docSnap.exists()) {
             await setDoc(defaultCategoryRef, {
                 name: "Uncategorized",
-                description: "Default category for uncategorized transactions"
+                description: "Default category for uncategorized transactions",
+                spentAmount: 0,
+                budgetLimit:  0,
             });
         }
     } catch (error) {

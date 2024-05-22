@@ -1,8 +1,15 @@
+"use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "../ui/button";
-import { Plus } from "lucide-react";
 
-export default function CreateBudgetCard() {
+import CreateBudgetCategoryModal from "./CreateBudgetCategoryModal";
+
+type CreateBudgetCardProps = {
+  collectionName: string;
+};
+
+export default function CreateBudgetCard({
+  collectionName,
+}: CreateBudgetCardProps) {
   return (
     <>
       <Card>
@@ -10,9 +17,7 @@ export default function CreateBudgetCard() {
           <CardTitle>Create a new category</CardTitle>
         </CardHeader>
         <CardContent className="flex justify-center">
-          <Button>
-            <Plus />
-          </Button>
+          <CreateBudgetCategoryModal collectionName={collectionName} />
         </CardContent>
       </Card>
     </>

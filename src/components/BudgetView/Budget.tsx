@@ -47,11 +47,6 @@ export default function Budget() {
     "Egna konton",
   ];
 
-  const handleAddCategories = () => {
-    createCategory(COLLECTION_NAMES.EXPENSES_CATEGORIES, expenseCategories);
-    createCategory(COLLECTION_NAMES.INCOME_CATEGORIES, incomeCategories);
-  };
-
   return (
     <>
       <div className="flex flex-col gap-5">
@@ -66,9 +61,6 @@ export default function Budget() {
         />
         <div className="flex justify-center items-center flex-col gap-2">
           <Button onClick={deleteAllCategories}>Delete all categories</Button>
-          <Button onClick={handleAddCategories}>
-            Create examples categories
-          </Button>
         </div>
       </div>
     </>
