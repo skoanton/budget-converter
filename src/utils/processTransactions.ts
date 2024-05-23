@@ -8,7 +8,6 @@ import { getCategoryReferenceByName } from "@/lib/categories/getCategoryReferenc
 import { Category, Transaction } from "@/types/transactionsType";
 import { getDefaultCategoryReference } from "@/lib/categories/getDefaultCategoryRef";
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
-import { useGetCategories } from "@/hooks/useGetCategories";
 
 interface Categories {
   incomeCategories: Category[];
@@ -20,13 +19,11 @@ export const processTransactions = async (
   categories: Categories,
   onShowNewAccountForm: (accountName: string) => Promise<number>
 ): Promise<Transaction[]> => {
-  if (
-    !text
-  ) {
+  if (!text) {
     console.error("Invalid input data");
     return [];
   }
-  const transactionLines = text?.split(`\n`);
+  const transactionLines = text.split(`\n`);
   if (transactionLines.length < 3) {
     console.error("Not enough lines in the text");
     return [];
@@ -62,7 +59,6 @@ export const processTransactions = async (
         amount < 0
           ? COLLECTION_NAMES.EXPENSES_CATEGORIES
           : COLLECTION_NAMES.INCOME_CATEGORIES;
-      console.log("Collection name:", collectionName);
       try {
         if (transactionCategory) {
           const ref = await getCategoryReferenceByName(

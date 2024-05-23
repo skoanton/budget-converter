@@ -13,6 +13,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import SortBudget from "./SortBudget";
 type BudgetViewProps = {
   title: string;
   collectionName: string;
@@ -20,8 +21,6 @@ type BudgetViewProps = {
 
 export default function BudgetView({ title, collectionName }: BudgetViewProps) {
   const { expenseCategories, incomeCategories } = useGetCategories();
-  console.log("ExpenseCategories i budgetview:", expenseCategories);
-  console.log("IncomeCategories i budgetview:", incomeCategories);
   return (
     <>
       <Accordion type="single" collapsible>
