@@ -7,7 +7,7 @@ export interface ICategoryTypeRow extends RowDataPacket {
   }
 
 export function GetAll() {
-    return SelectQuery<ICategoryTypeRow>("SELECT * FROM category_types;")
+    return SelectQuery<ICategoryTypeRow>("SELECT * FROM category_type;")
 }  
 
 export function GetOne(id:string) {

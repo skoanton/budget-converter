@@ -9,7 +9,7 @@ export async function SelectQuery<T>(
 }
 
 export async function ModifyQuery(
-  queryString: string, params?:any[]
+  queryString: string, params?:any []
 ): Promise<ResultSetHeader> {
   const [results] = await pool.execute(queryString, params );
   return results as ResultSetHeader;
