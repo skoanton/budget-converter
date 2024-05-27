@@ -1,7 +1,0 @@
-{
-  "/budget/page": "app/budget/page.js",
-  "/add-transactions/page": "app/add-transactions/page.js",
-  "/page": "app/page.js",
-  "/accounts/page": "app/accounts/page.js",
-  "/accounts/[accountId]/page": "app/accounts/[accountId]/page.js"
-}
