@@ -1,33 +1,29 @@
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase";
 import { string } from "zod";
+import axios from "axios";
 
-export const createCategory = async (collectionName:string,categories:string[] | string,budgetLimitSet:number) => {
+interface CategoryType  {  
+     name: string;
+     id: number;     
+}
+
+export const createCategory = async (categoryType:CategoryType,categories:string,budgetLimitSet:number) => {
+    
+    
+    const categoryToAdd = {
+        name: categories,
+        spent: 0,
+        budget: budgetLimitSet,
+        category_type_ID : categoryType.id,
+        description_ID : null
+    }
+
     try {
-        const categoriesCollection = collection(db,collectionName);
+        
+        await axios.post("http://localhost:8801/api/categories", categoryToAdd)
 
-        //TODO: fixa så man kan lägga till flera kategorier samtidgt
-
-        if(Array.isArray(categories)){
-            for( const category of categories){
-                await addDoc(categoriesCollection, {
-                    description: "",
-                    name: category,
-                    spentAmount: 0,
-                    budgetLimit:  budgetLimitSet,
-                })
-            }
-        }
-        else{
-            await addDoc(categoriesCollection, {
-                description: "",
-                name: categories,
-                spentAmount: 0,
-                budgetLimit:  budgetLimitSet,
-            })
-        }
-
-       
+        //TODO: fixa så man kan lägga till flera kategorier samtidgt  
         
         console.log("Added all categories to the database");
 

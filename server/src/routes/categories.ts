@@ -32,7 +32,7 @@ router.get("/", async (req,res) => {
 router.post("/", async (req,res) => {
 
     const validationResult = categorySchema.safeParse(req.body);
-    console.log(req.body);
+    console.log(req);
     if(!validationResult.success){
         return res.status(400).json({ error: validationResult.error.errors });
     }

@@ -4,21 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { deleteCategory } from "@/lib/categories/deleteCategory";
 import { Button } from "../ui/button";
-import { COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { CATEGORY_TYPES, COLLECTION_NAMES } from "@/constants/collectionsNames";
 import { Trash2 } from "lucide-react";
 type BudgetCardProps = {
   category: Category;
-  collectionName: string;
+  categoryType: {
+    name: string;
+    id: number;
+  };
 };
 
 export default function BudgetCard({
   category,
-  collectionName,
+  categoryType,
 }: BudgetCardProps) {
   const handleDelete = async () => {
-    console.log("Category id:", category.id);
-    console.log("Collectionname:", collectionName);
-    await deleteCategory(collectionName, category.id);
+    /*  await deleteCategory(categoryType, category.id); */
   };
 
   const spentAmount = Math.round(Math.abs(category.spentAmount));
@@ -36,7 +37,7 @@ export default function BudgetCard({
         </CardHeader>
         <Link href={`budget/${category.id}`}>
           <CardContent>
-            {collectionName === COLLECTION_NAMES.INCOME_CATEGORIES ? (
+            {categoryType === CATEGORY_TYPES.INCOME ? (
               <>
                 <p className="font-bold">
                   Income:{" "}
@@ -57,7 +58,7 @@ export default function BudgetCard({
                 </p>
               </>
             ) : (
-              collectionName === COLLECTION_NAMES.EXPENSES_CATEGORIES && (
+              categoryType === CATEGORY_TYPES.EXPENSE && (
                 <>
                   <p className="font-bold">
                     Spent:{" "}

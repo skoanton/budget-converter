@@ -4,11 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CreateBudgetCategoryModal from "./CreateBudgetCategoryModal";
 
 type CreateBudgetCardProps = {
-  collectionName: string;
+  categoryType: {
+    name: string;
+    id: number;
+  };
 };
 
 export default function CreateBudgetCard({
-  collectionName,
+  categoryType,
 }: CreateBudgetCardProps) {
   return (
     <>
@@ -17,7 +20,7 @@ export default function CreateBudgetCard({
           <CardTitle>Create a new category</CardTitle>
         </CardHeader> */}
         <CardContent>
-          <CreateBudgetCategoryModal collectionName={collectionName} />
+          <CreateBudgetCategoryModal categoryType={categoryType} />
         </CardContent>
       </Card>
     </>

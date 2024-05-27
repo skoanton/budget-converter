@@ -17,11 +17,14 @@ import CreateBudgetCategoryForm from "./CreateBudgetCategoryForm";
 import { useState } from "react";
 
 type CreateBudgetCategoryModalProps = {
-  collectionName: string;
+  categoryType: {
+    name: string;
+    id: number;
+  };
 };
 
 export default function CreateBudgetCategoryModal({
-  collectionName,
+  categoryType,
 }: CreateBudgetCategoryModalProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -40,7 +43,7 @@ export default function CreateBudgetCategoryModal({
           </DialogHeader>
           <CreateBudgetCategoryForm
             onSetIsDialogOpen={setIsDialogOpen}
-            collectionName={collectionName}
+            categoryType={categoryType}
           />
         </DialogContent>
       </Dialog>

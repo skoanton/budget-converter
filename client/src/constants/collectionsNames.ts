@@ -4,3 +4,18 @@ export const COLLECTION_NAMES = {
     ACCOUNTS : "accounts",
     TRANSACTIONS : "transactions",
 }
+
+export const CATEGORY_TYPES = {
+    INCOME: {
+        name: "income",
+        id: 1
+    },
+    EXPENSE: {
+        name: "expense",
+        id: 2,
+    },
+    SAVINGS: {
+        name: "savings",
+        id: 3
+    }
+}

@@ -22,12 +22,15 @@ const newCategorySchema = z.object({
 });
 
 type CreateBudgetCategoryFormProps = {
-  collectionName: string;
+  categoryType: {
+    name: string;
+    id: number;
+  };
   onSetIsDialogOpen: (isOpen: boolean) => void;
 };
 
 export default function CreateBudgetCategoryForm({
-  collectionName,
+  categoryType,
   onSetIsDialogOpen,
 }: CreateBudgetCategoryFormProps) {
   const newCategoryForm = useForm<z.infer<typeof newCategorySchema>>({
@@ -44,7 +47,7 @@ export default function CreateBudgetCategoryForm({
     console.log(values.categoryName);
 
     await createCategory(
-      collectionName,
+      categoryType,
       values.categoryName,
       values.categoryBudget
     );
