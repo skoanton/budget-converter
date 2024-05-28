@@ -6,37 +6,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useGetAccountRef } from "@/hooks/useGetAccountRef";
-import { useGetCategoryRef } from "@/hooks/useGetCategoryRef";
-import { Transaction } from "@/types/transactionsType";
+import { useGetEntityById } from "@/hooks/useGetEntityById";
+import { Account } from "@/types/accounts";
+import { Category } from "@/types/categories";
+import { Description } from "@/types/descriptions";
+import { Transaction } from "@/types/transactions";
 
 type TransactionCardProps = {
   transaction: Transaction;
 };
 
 export default function TransactionCard({ transaction }: TransactionCardProps) {
-  const {
-    account,
-    error: accountError,
-    loading: accountLoading,
-  } = useGetAccountRef(transaction.account);
+  const { entity: account, loading: accountLoading } =
+    useGetEntityById<Account>(transaction.account_ID, "/accounts");
 
-  const {
-    category,
-    error: categoryError,
-    loading: categoryLoading,
-  } = useGetCategoryRef(transaction.category);
+  const { entity: category, loading: categoryLoading } =
+    useGetEntityById<Category>(transaction.category_ID, "/categories");
 
-  if (accountLoading || categoryLoading) {
+  const { entity: description, loading: descriptionLoading } =
+    useGetEntityById<Description>(transaction.description_ID, "/descriptions");
+
+  if (accountLoading || categoryLoading || descriptionLoading) {
     return <div>Loading....</div>;
-  }
-
-  if (accountError) {
-    return <div>Error loading account: {accountError}</div>;
-  }
-
-  if (categoryError) {
-    return <div>Error loading category: {categoryError}</div>;
   }
 
   return (
@@ -47,8 +38,7 @@ export default function TransactionCard({ transaction }: TransactionCardProps) {
       </CardHeader>
       <CardContent>
         <p>
-          Description:{" "}
-          <span className="font-bold"> {transaction.description}</span>
+          Description: <span className="font-bold"> {description?.name}</span>
         </p>
         <p> Amount: {transaction.amount}</p>
       </CardContent>

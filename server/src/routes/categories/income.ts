@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { getAllEntities } from "../utils/getAllEntities";
 import { Category } from "../../types/categories";
+import { getCategoriesByType } from "../utils/getCategoriesByType";
 
 const router = Router();
 
 router.get("/", async (req,res) => {
-    getAllEntities<Category>("categories",res);
-})
+    await getCategoriesByType<Category>("categories",1,res);
+     
+ })
 
 export default router;

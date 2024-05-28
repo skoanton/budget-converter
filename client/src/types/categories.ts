@@ -6,3 +6,9 @@ export interface Category {
     category_type_ID: number;
     description_ID: number | null;
   }
+
+
+  export interface CategoryType {
+    id: number;
+    type: string;
+  }

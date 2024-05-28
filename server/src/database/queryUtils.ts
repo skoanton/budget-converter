@@ -5,8 +5,14 @@ import pool from "./connection";
 export async function SelectQuery<T>(
   queryString: string, params?:any[]
 ): Promise<Partial<T[]>> {
-  const [results] = await pool.execute(queryString, params );
+  try {
+    const [results] = await pool.execute(queryString, params );
   return results as T[];
+  } catch (error) {
+    console.error("Query Error:", error);
+    throw error;
+  }
+  
 }
 
 export async function ModifyQuery(

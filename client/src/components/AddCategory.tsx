@@ -3,8 +3,8 @@
 import React, { Fragment, useState } from "react";
 import CategoryForm from "./CategoryForm/CategoryForm";
 import TransactionCard from "./Transactioncard/TransactionCard";
-import { Transaction } from "@/types/transactionsType";
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { Transaction } from "@/types/transactions";
 
 type AddCategoryProps = {
   transactions: Transaction[];
@@ -17,23 +17,18 @@ export default function AddCategory({
   onHandleUpdateTransactions,
 }: AddCategoryProps) {
   const [currentForm, setCurrentForm] = useState(0);
-
+  console.log("Transactions in add category", transactions);
   return (
     <>
       {transactions.map((transaction, index) => {
         return (
           currentForm === index && (
             <div
-              key={transaction.id}
+              key={index}
               className="flex flex-col justify-center items-center"
             >
-              <TransactionCard key={transaction.id} transaction={transaction} />
+              <TransactionCard key={index} transaction={transaction} />
               <CategoryForm
-                categoryType={`${
-                  transaction.amount < 0
-                    ? COLLECTION_NAMES.EXPENSES_CATEGORIES
-                    : COLLECTION_NAMES.INCOME_CATEGORIES
-                }`}
                 addCategory={true}
                 transaction={transaction}
                 transactions={transactions}

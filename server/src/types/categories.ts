@@ -9,6 +9,6 @@ export interface Category {
 
 
   export interface CategoryType {
-    category_type_id: number;
-    category_type_name: string;
+    id: number;
+    type: string;
   }

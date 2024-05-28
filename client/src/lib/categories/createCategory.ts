@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Category } from "@/types/categories";
+import { apiRequest } from "../api";
 
 interface CategoryType  {  
      name: string;
@@ -15,13 +16,9 @@ export const createCategory = async (categoryType:CategoryType,categories:string
         category_type_ID : categoryType.id,
         description_ID : null
     }
-
-    try {
-        console.log(categoryToAdd);
-        await axios.post("http://localhost:8801/api/categories", categoryToAdd)
-
-        //TODO: fixa så man kan lägga till flera kategorier samtidgt  
-        
+    try {   
+        await apiRequest("/categories","POST",categoryToAdd);
+        //TODO: fixa så man kan lägga till flera kategorier samtidgt       
         console.log("Added categories to the database");
 
     } catch (error) {

@@ -1,5 +1,4 @@
 import { useProcessTransactions } from "@/hooks/useProcessTransactions";
-import { Transaction } from "@/types/transactionsType";
 import { extractCategorizedTransactions } from "@/utils/extractCategorizedTransactions";
 import { extractUncategorizedTransactions } from "@/utils/extractUncategorizedTransactions";
 import { useEffect, useState } from "react";
@@ -9,6 +8,7 @@ import { Button } from "../ui/button";
 import { uploadTransactions } from "@/lib/uploadTransactions";
 import CreateNewAccountForm from "../CreateNewAccountForm/CreateNewAccountForm";
 import Loading from "../Loading/Loading";
+import { Transaction } from "@/types/transactions";
 
 type ProcessingTransactionViewProps = {
   text: string;
@@ -39,6 +39,7 @@ export default function ProcessingTransactionView({
       const processTransactionsFromText = async () => {
         setIsLoading(true);
         const allTransactions = await processTextTransactions(text);
+        console.log("All transcations:", allTransactions);
         const categorizedTransactions = await extractCategorizedTransactions(
           allTransactions
         );
@@ -47,6 +48,7 @@ export default function ProcessingTransactionView({
           await extractUncategorizedTransactions(allTransactions);
 
         setUncategorizedTransactions(uncategorizedTransactions);
+        console.log("Uncategorized", uncategorizedTransactions);
         setIsLoading(false);
       };
 
@@ -110,16 +112,14 @@ export default function ProcessingTransactionView({
               </div>
             )
           )}
-
-          {newTransaction && newAccountInfo && (
-            <>
-              <CreateNewAccountForm
-                onSubmit={handleNewAccountSubmit}
-                accountName={newAccountInfo.name}
-              />
-            </>
-          )}
         </>
+      )}
+
+      {newTransaction && newAccountInfo && (
+        <CreateNewAccountForm
+          onSubmit={handleNewAccountSubmit}
+          accountName={newAccountInfo.name}
+        />
       )}
     </>
   );

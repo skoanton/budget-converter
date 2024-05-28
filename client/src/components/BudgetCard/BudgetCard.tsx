@@ -21,9 +21,9 @@ export default function BudgetCard({
 }: BudgetCardProps) {
   const handleDelete = async () => {
     /*  await deleteCategory(categoryType, category.id); */
-    console.log("tjo du kan inte köra denna nu hörru");
+    console.log("tjo du kan inte köra denna nu hörru ;)");
   };
-  console.log("Budget card");
+
   const spentAmount = Math.round(Math.abs(category.spent));
   const budgetDif = Math.round(Math.abs(category.spent)) - category.budget;
 

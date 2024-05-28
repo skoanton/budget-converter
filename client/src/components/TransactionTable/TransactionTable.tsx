@@ -1,11 +1,11 @@
 "use client";
 
-import { Transaction } from "@/types/transactionsType";
 import Link from "next/link";
 import TransactionRow from "./TransactionRow";
 import { useEffect, useState } from "react";
-import { getTransactions } from "@/lib/getTransactions";
 import { getTransactionsByAccount } from "@/lib/transactions/getTransactionsByAccount";
+import { Transaction } from "@/types/transactions";
+import { useGetEntities } from "@/hooks/useGetEntities";
 
 type BaseTransactionTableProps = {
   allTransactions: boolean;
@@ -24,29 +24,8 @@ type TransactionTableProps = BaseTransactionTableProps &
   (AccountTransactionTableProps | AllTransactionsTableProps);
 
 export default function TransactionTable(props: TransactionTableProps) {
-  const [transactions, setTransations] = useState<Transaction[]>([]);
-
-  useEffect(() => {
-    const fetchAllTransactions = async () => {
-      const fetchedTransaction = await getTransactions();
-      if (fetchedTransaction) {
-        setTransations(fetchedTransaction);
-      }
-    };
-
-    const fetchAccountTransactions = async (accountId: string) => {
-      const fetchedTransaction = await getTransactionsByAccount(accountId);
-      if (fetchedTransaction) {
-        setTransations(fetchedTransaction);
-      }
-    };
-
-    if (props.allTransactions) {
-      fetchAllTransactions();
-    } else {
-      fetchAccountTransactions(props.accountId);
-    }
-  }, [props.allTransactions]);
+  const { entities: transactions, loading } =
+    useGetEntities<Transaction>("/transactions");
 
   return (
     <>

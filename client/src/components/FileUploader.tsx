@@ -1,5 +1,4 @@
 "use client";
-
 import { Input } from "./ui/input";
 import ProcessingTransactionView from "./ProcessingTransactionView/ProcessingTransactionView";
 import { useState } from "react";

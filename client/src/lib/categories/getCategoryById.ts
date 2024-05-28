@@ -1,32 +1,25 @@
 import {doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { Category } from "@/types/transactionsType";
+import { apiRequest } from "../api";
+import { Category } from "@/types/categories";
 
-export const getCategoryById = async (categoryId:string,collectionName:string):Promise<Category | null> => {
+
+export const getCategoryById = async (id:number):Promise<Category | null> => {
     try {
 
-        const categoryRef = doc(db,collectionName, categoryId);
-        const categorySnapshot = await getDoc(categoryRef);
 
-        if(categorySnapshot.exists()){
-            const categoryData = categorySnapshot.data();
-            const categoryToReturn: Category = {
-                id: categorySnapshot.id,
-                name: categoryData.name,
-                description: categoryData.description,
-                spentAmount: categoryData.spentAmount,
-                budgetLimit: categoryData.budgetLimit
-            }
+        const category: Category[] = await apiRequest(`/categories/id/${id}`);
 
-            return categoryToReturn
+        if(category.length > 0){
+            return category[0];
         }
-
-        else {
-            console.log("Category not found");
+        else{
+            console.error(`Could not find category with id: ${id}`);
             return null;
         }
+        }     
 
-    } catch (error) {
+     catch (error) {
         console.error("Could not fetch category by name:", error);
         return null;
     }

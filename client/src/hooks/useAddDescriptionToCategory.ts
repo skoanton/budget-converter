@@ -1,6 +1,7 @@
 const { db } = require('@/lib/firebase');
 const { doc, getDoc, updateDoc } = require('firebase/firestore');
-import { Category } from "@/types/transactionsType";
+
+import { Category } from "@/types/categories";
 import { useCallback, useEffect } from "react";
 
 export const useAddDescriptionToCategory = () => {

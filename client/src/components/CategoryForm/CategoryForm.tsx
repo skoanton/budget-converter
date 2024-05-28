@@ -1,16 +1,13 @@
 "use client";
 import { useGetCategories } from "@/hooks/useGetCategories";
-
 import { updateTransactions } from "@/lib/updateTransactions";
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -20,19 +17,17 @@ import { z } from "zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Category, Transaction } from "@/types/transactionsType";
 import { addDescriptionToCategory } from "@/lib/categories/addDescriptionToCategory";
-import { getCategoryById } from "@/lib/categories/getCategoryById";
-import { COLLECTION_NAMES } from "@/constants/collectionsNames";
-import { DocumentReference } from "firebase/firestore";
-import { getCategoryRefById } from "@/lib/categories/getCategoryRefById";
-import { truncateSync } from "fs";
+import { CATEGORY_TYPES } from "@/constants/collectionsNames";
+import { Transaction } from "@/types/transactions";
+import { Category, CategoryType } from "@/types/categories";
+import { useGetEntityById } from "@/hooks/useGetEntityById";
+import { getEntitiyById } from "@/lib/getEntityById";
 
 const formSchema = z.object({
   category: z.string(),
@@ -46,14 +41,12 @@ type CategoryFormBaseProps = {
 type CategoryFormChangeProps = {
   changeCategory: true;
   transaction: Transaction;
-  categoryType: string;
 };
 
 type CategoryFormAddProps = {
   addCategory: true;
   transaction: Transaction;
   transactions: Transaction[];
-  categoryType: string;
   onHandleUpdateTransactions: (
     newCategorizedTransactions: Transaction[]
   ) => void;
@@ -75,6 +68,17 @@ function isAddCategory(
 }
 
 export default function CategoryForm(props: CategoryFormProps) {
+  const { expenseCategories, incomeCategories } = useGetCategories();
+  const [category, setCategory] = useState<Category | null>(null);
+  /*  const { entity: category } = useGetEntityById<Category>(
+    props.transaction.category_ID,
+    "/categories"
+  ); */
+  const { entity: currentCategoryType } = useGetEntityById<CategoryType>(
+    props.transaction.amount > 0 ? 1 : 2,
+    "/categories/types"
+  );
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -84,123 +88,56 @@ export default function CategoryForm(props: CategoryFormProps) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     handleSubmit(values.category);
   }
-  const { expenseCategories, incomeCategories } = useGetCategories();
 
-  const fetchCategory = async (
-    inputCategory: string
-  ): Promise<{
-    currentCategoryRef: DocumentReference<Category> | null;
-    currentCategory: Category | null;
-    currentCollectionName: string;
-  }> => {
-    const collectionName =
-      props.transaction.type === "expense"
-        ? COLLECTION_NAMES.EXPENSES_CATEGORIES
-        : COLLECTION_NAMES.INCOME_CATEGORIES;
-
-    try {
-      const fetchedCategoryRef = await getCategoryRefById(
-        inputCategory,
-        collectionName
-      );
-
-      if (!fetchedCategoryRef) {
-        console.error("Could not fetch category ref");
-        return {
-          currentCategoryRef: null,
-          currentCategory: null,
-          currentCollectionName: collectionName,
-        };
-      }
-
-      const fetchedCategory = await getCategoryById(
-        fetchedCategoryRef.id,
-        collectionName
-      );
-
-      if (!fetchedCategory) {
-        console.error(" Could not fetch category");
-        return {
-          currentCategoryRef: null,
-          currentCategory: null,
-          currentCollectionName: collectionName,
-        };
-      }
-
-      return {
-        currentCategoryRef: fetchedCategoryRef,
-        currentCategory: fetchedCategory,
-        currentCollectionName: collectionName,
-      };
-    } catch (error) {
-      console.error("An error occurred while fetching category:", error);
-      return {
-        currentCategoryRef: null,
-        currentCategory: null,
-        currentCollectionName: collectionName,
-      };
-    }
+  const fetchCategory = async (categoryId: string) => {
+    const fetchedCategory = await getEntitiyById<Category>(
+      Number(categoryId),
+      "/categories"
+    );
+    setCategory(fetchedCategory);
   };
 
   const handleSubmit = async (inputCategory: string) => {
-    try {
-      const { currentCategoryRef, currentCategory, currentCollectionName } =
+    if (isAddCategory(props)) {
+      const { transaction, transactions, onHandleUpdateTransactions } = props;
+      try {
         await fetchCategory(inputCategory);
+        if (category) {
+          await addDescriptionToCategory(transaction.description_ID, category);
 
-      if (currentCategoryRef && currentCategory) {
-        console.log("Current category:", currentCategory);
-        if (isAddCategory(props)) {
-          const { transaction, transactions, onHandleUpdateTransactions } =
-            props;
-          try {
-            await addDescriptionToCategory(
-              transaction.description,
-              currentCategory,
-              currentCollectionName
+          const newCategorizedTransactions = transactions.filter((trans) => {
+            return (
+              trans.description_ID === transaction.description_ID &&
+              Math.sign(trans.amount) === Math.sign(transaction.amount) // Lägger bara till descriptions med samma value (+ eller -)
             );
-            const newCategorizedTransactions = transactions.filter((trans) => {
-              return (
-                trans.description === transaction.description &&
-                Math.sign(trans.amount) === Math.sign(transaction.amount) // Lägger bara till descriptions med samma value (+ eller -)
-              );
-            });
-            console.log(
-              "New Categoriezed transactions:",
-              newCategorizedTransactions
-            );
-            newCategorizedTransactions.forEach((trans) => {
-              trans.category = currentCategoryRef;
-            });
+          });
 
-            onHandleUpdateTransactions(newCategorizedTransactions);
-          } catch (error) {
-            console.error(
-              `Could not add ${transaction.description} to ${currentCategory.name}`
-            );
-          }
+          newCategorizedTransactions.forEach((trans) => {
+            trans.category_ID = category.id!;
+          });
+
+          onHandleUpdateTransactions(newCategorizedTransactions);
+        } else {
+          console.error("Current category is undefiend");
         }
-
-        if (isChangeCategory(props)) {
-          const { transaction } = props;
-
-          const newTransactionData: Transaction = {
-            ...transaction,
-            category: currentCategoryRef,
-          };
-          try {
-            updateTransactions(newTransactionData);
-          } catch (error) {
-            console.error(
-              `Could not update transaction "${transaction.id}". Error:`,
-              error
-            );
-          }
-        }
-      } else {
-        console.error("No such category found.");
+      } catch (error) {
+        console.error(
+          `Could not add ${transaction.description_ID} to ${category?.id}`
+        );
       }
-    } catch (error) {
-      console.error("Could not fetch categories. Error:", error);
+    }
+
+    if (isChangeCategory(props)) {
+      if (category) {
+        const { transaction } = props;
+
+        const newTransactionData: Transaction = {
+          ...transaction,
+          category_ID: category.id!,
+        };
+
+        await updateTransactions(newTransactionData);
+      }
     }
   };
 
@@ -221,8 +158,8 @@ export default function CategoryForm(props: CategoryFormProps) {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {props.categoryType ===
-                        COLLECTION_NAMES.EXPENSES_CATEGORIES ? (
+                        {currentCategoryType?.id ===
+                        CATEGORY_TYPES.EXPENSE.id ? (
                           expenseCategories.length > 0 ? (
                             expenseCategories.map((category) => (
                               <SelectItem
@@ -234,11 +171,11 @@ export default function CategoryForm(props: CategoryFormProps) {
                             ))
                           ) : (
                             <SelectItem value="None">
-                              No Categories found
+                              No Expense Categories Found
                             </SelectItem>
                           )
-                        ) : props.categoryType ===
-                          COLLECTION_NAMES.INCOME_CATEGORIES ? (
+                        ) : currentCategoryType?.id ===
+                          CATEGORY_TYPES.INCOME.id ? (
                           incomeCategories.length > 0 ? (
                             incomeCategories.map((category) => (
                               <SelectItem
@@ -250,7 +187,7 @@ export default function CategoryForm(props: CategoryFormProps) {
                             ))
                           ) : (
                             <SelectItem value="None">
-                              No Categories found
+                              No Income Categories Found
                             </SelectItem>
                           )
                         ) : (

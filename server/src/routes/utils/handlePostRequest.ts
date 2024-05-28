@@ -17,7 +17,8 @@ export async function handlePostRequest<T>(
     console.log("Data:",data);
     res.json(data);
   } catch (error) {
-    res.status(500).json, { error: "Internal server error" };
+    console.error("Error:", error); 
+    res.status(500).json({ error: "Internal server error" });
   }
 }
 

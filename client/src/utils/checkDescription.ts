@@ -1,12 +1,26 @@
-import { Category } from "@/types/transactionsType";
 
+import { getCategories } from "@/lib/categories/getCategories";
+import { CreateDescription } from "@/lib/descriptions/createDescription";
+import { getDescriptions } from "@/lib/descriptions/getDescriptions";
 
-export const checkDescription = (categories: Category[],description:string): Category  |undefined => {
-  
+export const checkDescription = async (transactionDescription:string): Promise<number | null> => {
+    const categories = await getCategories();
+    const descriptions = await getDescriptions();
 
-    return categories.find((category) => {
-        const trimmedCategoryDescription = category.description.split(`,`).map(desc => desc.trim());
-      
-        return trimmedCategoryDescription.includes(description);
-      });
+    if(descriptions){
+     let descriptionID = descriptions.find((description) => description.name === transactionDescription )?.id;
+     if(!descriptionID){
+        await CreateDescription(transactionDescription);
+        const updatedDescriptions = await getDescriptions();
+        descriptionID = updatedDescriptions?.find(description => description.name === transactionDescription)?.id;
+     }
+
+     if(descriptionID){
+      const categoryId = categories.find((category) => category.description_ID === descriptionID)?.id;
+      return categoryId ?? 1;
+     }
+     
+    }
+    return null;
+
 }

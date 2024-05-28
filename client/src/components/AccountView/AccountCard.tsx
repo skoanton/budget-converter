@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Account } from "@/typesss/accountType";
+import { Account } from "@/types/accounts";
 import Link from "next/link";
 
 type AccountCardProps = {

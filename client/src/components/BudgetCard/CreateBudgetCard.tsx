@@ -16,9 +16,9 @@ export default function CreateBudgetCard({
   return (
     <>
       <Card className="flex justify-center items-center">
-        {/*   <CardHeader>
+        <CardHeader>
           <CardTitle>Create a new category</CardTitle>
-        </CardHeader> */}
+        </CardHeader>
         <CardContent>
           <CreateBudgetCategoryModal categoryType={categoryType} />
         </CardContent>

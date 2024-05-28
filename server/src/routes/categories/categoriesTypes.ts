@@ -5,7 +5,7 @@ import { getAllEntities } from "../utils/getAllEntities";
 const router = Router();
 
 //GET /api/categories/types/123
-router.get("/:id", async (req,res) => {
+router.get("/id/:id", async (req,res) => {
    getEntitiesById<CategoryType>("category_type",req,res);
 });
 

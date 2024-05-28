@@ -7,8 +7,8 @@ export async function getEntitiesByName<T>(
   req: Request<{ name: string }, any, any, any>,
   res: Response<any>
 ) {
-  const name = req.params.name;
-
+  const name = decodeURIComponent(req.params.name);
+  console.log(`Decoded Name: ${name}`);
   try {
     const foundEntity = await GetByName<T>(name,tablename);
     if (!foundEntity) {
@@ -16,6 +16,7 @@ export async function getEntitiesByName<T>(
     }
     res.json(foundEntity);
   } catch (error) {
+    console.error(`Error fetching entity by name (${name}):`, error);
     return res.status(500).json, { error: "Internal server error" };
   }
 }

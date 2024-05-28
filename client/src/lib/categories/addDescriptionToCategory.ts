@@ -1,31 +1,16 @@
-import { Category } from "@/types/transactionsType";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { Category } from "@/types/categories";
+import { apiRequest } from "../api";
 
-
-export const addDescriptionToCategory = async (description: string,category: Category,collectionName:string) => {
+export const addDescriptionToCategory = async (descriptionID: number,category: Category) => {
 
     try {
-        const categoryDocRef = doc(db, collectionName, category.id);
-        const categoryDocSnap = await getDoc(categoryDocRef);
-  
-        if (categoryDocSnap.exists()) {
-          const categoryData = categoryDocSnap.data();
-          const currentDescription: string = categoryData.description || '';
-          console.log("Currendecsirption:", currentDescription);
-          const updatedDescription = currentDescription
-            ? `${currentDescription},${description}`
-            : description;
-  
-          await updateDoc(categoryDocRef, {
-            description: updatedDescription,
-          });
-          console.log(`Added "${description}" to category "${category.name}"`);
-        } else {
-          console.log('No such document!');
-        }
+       
+       const updateData = {description_ID: descriptionID};
+        await apiRequest(`/categories/id/${category.id}`,"PATCH",updateData);
+        console.log(`Category with ID ${category.id} updated with description ID ${descriptionID}`);
+       
       } catch (error) {
-        console.error('Error updating document: ', error);
+        console.error('Error updating categories:', error);
       }
 
 }

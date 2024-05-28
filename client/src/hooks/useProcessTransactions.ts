@@ -2,9 +2,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useGetCategories } from "./useGetCategories";
 import { processTransactions } from "@/utils/processTransactions";
-import { Account } from "@/typesss/accountType";
-import { Transaction } from "@/types/transactionsType";
-
+import { Account } from "@/types/accounts";
+import { Transaction } from "@/types/transactions";
 
 
 export const useProcessTransactions = ()  => {
@@ -17,7 +16,7 @@ export const useProcessTransactions = ()  => {
   const showNewAccountForm = useCallback((accountName:string) => {
     return new Promise<number>((resolve) => {
       setResolveNewAccount(() => resolve);
-      setNewAccountInfo({id: "", name: accountName, balance: 0});   
+      setNewAccountInfo({id: undefined ,name: accountName, balance: 0}); 
       setNewTransaction(true);
     });
   }, [])
@@ -37,7 +36,6 @@ export const useProcessTransactions = ()  => {
           setError(null);
           try {
               const transactions = await processTransactions(text,categories,showNewAccountForm)
-              
               return transactions;
             
           } catch (error) {

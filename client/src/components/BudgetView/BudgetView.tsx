@@ -1,20 +1,14 @@
 "use client";
 import CreateBudgetCard from "../BudgetCard/CreateBudgetCard";
-
 import { useGetCategories } from "@/hooks/useGetCategories";
 import BudgetCard from "../BudgetCard/BudgetCard";
 import { CATEGORY_TYPES } from "@/constants/collectionsNames";
-
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import SortBudget from "./SortBudget";
-import { useEffect, useState } from "react";
-import { Category } from "@/types/categories";
-import axios from "axios";
 type BudgetViewProps = {
   title: string;
   categoryType: {
@@ -24,40 +18,8 @@ type BudgetViewProps = {
 };
 
 export default function BudgetView({ title, categoryType }: BudgetViewProps) {
-  /* const { expenseCategories, incomeCategories } = useGetCategories(); */
-  const [incomeCategories, setIncomeCategories] = useState<Category[]>([]);
-  const [expenseCategories, setExpenseCategories] = useState<Category[]>([]);
-  useEffect(() => {
-    const fetchCategories = async () => {
-      if (categoryType === CATEGORY_TYPES.INCOME) {
-        try {
-          const fetchedIncomeCategories = await axios.get(
-            "http://localhost:8801/api/categories/income"
-          );
-          console.log("fetchedIncomecategories", fetchedIncomeCategories.data);
-          setIncomeCategories(fetchedIncomeCategories.data as Category[]);
-        } catch (error) {
-          console.error("Error fetching categories:", error);
-        }
-      }
-      if (categoryType === CATEGORY_TYPES.EXPENSE) {
-        try {
-          const fetchedExpenseCategories = await axios.get(
-            "http://localhost:8801/api/categories/expense"
-          );
-          console.log(
-            "fetchedExpenseCategories",
-            fetchedExpenseCategories.data
-          );
-          setExpenseCategories(fetchedExpenseCategories.data as Category[]);
-        } catch (error) {
-          console.error("Error fetching categories:", error);
-        }
-      }
-    };
+  const { expenseCategories, incomeCategories } = useGetCategories();
 
-    fetchCategories();
-  }, []);
   console.log(expenseCategories.length);
   return (
     <>
