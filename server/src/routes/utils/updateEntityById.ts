@@ -6,6 +6,8 @@ export async function updateEntityById<T>(tableName:string,req: Request<{ id: st
 
     const id = req.params.id;
     const queryString = `UPDATE ${tableName} SET ? WHERE id = ${id} `
+    console.log("Försöker uppdatera med ", queryString);
+    
     try {
         const result = await ModifyQuery(queryString, [reqBody, id]);
         if (result.affectedRows === 0) {
@@ -17,4 +19,7 @@ export async function updateEntityById<T>(tableName:string,req: Request<{ id: st
         res.status(500).json({ error: "Internal server error" });
       }
     }
+
+
+
 

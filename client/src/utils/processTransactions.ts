@@ -1,11 +1,9 @@
 import { removeFirstAndLastChar } from "./removeFirstAndLastChar";
 import { checkDescription } from "./checkDescription";
-
 import { Category } from "@/types/categories";
 import { Transaction } from "@/types/transactions";
 import { Account } from "@/types/accounts";
 import { getDescriptionIdByName } from "@/lib/descriptions/getDescriptionIdByName";
-import { getAccountById } from "@/lib/getAccountById";
 import { getAccountByName } from "@/lib/accounts/getAccontByName";
 import { createAccount } from "@/lib/accounts/createAccount";
 
@@ -32,7 +30,6 @@ export const processTransactions = async (
   //Remove title lines
   transactionLines.shift();
   transactionLines.shift();
-  console.log("TransactionsLines",transactionLines);
   const newTransactions: Transaction[] = [];
   for (const transaction of transactionLines) {
     const splitedTransaction = transaction.split(",");
@@ -46,7 +43,6 @@ export const processTransactions = async (
 
         let account:Account | null = await getAccountByName(accountName);
         if (!account) {
-          console.log("börjar att skapa ett konto");
           const startAmount = await onShowNewAccountForm(accountName);
           await createAccount(accountName, startAmount);
           account = await getAccountByName(accountName);
@@ -57,7 +53,6 @@ export const processTransactions = async (
           const descriptionId = await getDescriptionIdByName(description);
 
           if (account && account.id && transactionCategoryId && descriptionId) {
-            console.log("Creating a transaction");
             newTransactions.push({
               amount: amount,
               date: new Date(splitedTransaction[6]),

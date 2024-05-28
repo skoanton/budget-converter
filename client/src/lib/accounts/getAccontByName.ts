@@ -4,7 +4,6 @@ import { apiRequest } from "../api";
 export async function getAccountByName(name:string): Promise<Account | null> {
 
     const formattedName = encodeURIComponent(name.replace(/\s+/g, '-'));
-    console.log("Formated name:",formattedName);
     try {
         const data: Account[] = await apiRequest(`/accounts/name/${formattedName}`);
         if(data.length>0){

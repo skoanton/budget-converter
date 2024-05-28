@@ -8,7 +8,6 @@ export async function getEntitiesByName<T>(
   res: Response<any>
 ) {
   const name = decodeURIComponent(req.params.name);
-  console.log(`Decoded Name: ${name}`);
   try {
     const foundEntity = await GetByName<T>(name,tablename);
     if (!foundEntity) {

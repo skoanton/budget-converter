@@ -69,16 +69,10 @@ function isAddCategory(
 
 export default function CategoryForm(props: CategoryFormProps) {
   const { expenseCategories, incomeCategories } = useGetCategories();
-  const [category, setCategory] = useState<Category | null>(null);
-  /*  const { entity: category } = useGetEntityById<Category>(
-    props.transaction.category_ID,
-    "/categories"
-  ); */
   const { entity: currentCategoryType } = useGetEntityById<CategoryType>(
     props.transaction.amount > 0 ? 1 : 2,
     "/categories/types"
   );
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,42 +83,69 @@ export default function CategoryForm(props: CategoryFormProps) {
     handleSubmit(values.category);
   }
 
-  const fetchCategory = async (categoryId: string) => {
-    const fetchedCategory = await getEntitiyById<Category>(
-      Number(categoryId),
-      "/categories"
-    );
-    setCategory(fetchedCategory);
+  const fetchCategory = async (
+    categoryId: string
+  ): Promise<Category | null> => {
+    try {
+      const fetchedCategory = await getEntitiyById<Category>(
+        Number(categoryId),
+        "/categories"
+      );
+
+      return fetchedCategory;
+    } catch (error) {
+      console.error("Could not fetch category");
+      return null;
+    }
   };
 
-  const handleSubmit = async (inputCategory: string) => {
-    if (isAddCategory(props)) {
-      const { transaction, transactions, onHandleUpdateTransactions } = props;
+  const fetchAndUpdateCategory = async (
+    transaction: Transaction,
+    transactions: Transaction[],
+    onHandleUpdateTransactions: (
+      newCategorizedTransactions: Transaction[]
+    ) => void,
+    categoryID: string
+  ) => {
+    const category = await fetchCategory(categoryID);
+
+    if (category) {
+      console.log("Fetched category:", category);
       try {
-        await fetchCategory(inputCategory);
-        if (category) {
-          await addDescriptionToCategory(transaction.description_ID, category);
+        await addDescriptionToCategory(transaction.description_ID, category);
 
-          const newCategorizedTransactions = transactions.filter((trans) => {
-            return (
-              trans.description_ID === transaction.description_ID &&
-              Math.sign(trans.amount) === Math.sign(transaction.amount) // Lägger bara till descriptions med samma value (+ eller -)
-            );
-          });
+        const newCategorizedTransactions = transactions.filter((trans) => {
+          return (
+            trans.description_ID === transaction.description_ID &&
+            Math.sign(trans.amount) === Math.sign(transaction.amount) // Lägger bara till descriptions med samma value (+ eller -)
+          );
+        });
 
-          newCategorizedTransactions.forEach((trans) => {
-            trans.category_ID = category.id!;
-          });
+        newCategorizedTransactions.forEach((trans) => {
+          trans.category_ID = category.id!;
+        });
 
-          onHandleUpdateTransactions(newCategorizedTransactions);
-        } else {
-          console.error("Current category is undefiend");
-        }
+        onHandleUpdateTransactions(newCategorizedTransactions);
       } catch (error) {
         console.error(
-          `Could not add ${transaction.description_ID} to ${category?.id}`
+          "Error adding description to category or updating transactions:",
+          error
         );
       }
+    } else {
+      console.error("Current category is undefiend");
+    }
+  };
+
+  const handleSubmit = async (categoryID: string) => {
+    if (isAddCategory(props)) {
+      const { transaction, transactions, onHandleUpdateTransactions } = props;
+      await fetchAndUpdateCategory(
+        transaction,
+        transactions,
+        onHandleUpdateTransactions,
+        categoryID
+      );
     }
 
     if (isChangeCategory(props)) {
@@ -135,8 +156,11 @@ export default function CategoryForm(props: CategoryFormProps) {
           ...transaction,
           category_ID: category.id!,
         };
-
-        await updateTransactions(newTransactionData);
+        try {
+          await updateTransactions(newTransactionData);
+        } catch (error) {
+          console.error("Error updating transaction:", error);
+        }
       }
     }
   };

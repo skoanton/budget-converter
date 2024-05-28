@@ -17,6 +17,15 @@ const categorySchema = z.object({
 });
 
 
+const updateCategorySchema = z.object({
+    name: z.string().optional(),
+    budget: z.number().optional(),
+    spent: z.number().optional(),
+    category_type_ID: z.number().optional(),
+    description_ID: z.number().optional().nullable(),
+  });
+
+
 router.get("/", async (req,res) => {
     getAllEntities<Category>("categories",res);
 })
@@ -38,12 +47,12 @@ router.post("/", async (req,res) => {
 }) 
 
 router.patch("/id/:id",async (req,res) => {
-    const validationResult = categorySchema.safeParse(req.body);
+    console.log("Req body", req.body);
+    const validationResult = updateCategorySchema.safeParse(req.body);
     if(!validationResult.success){
         return res.status(400).json({ error: validationResult.error.errors });
     }
-    const reqBody: Omit<Category, 'id'> = validationResult.data; 
-
+    const reqBody: Partial<Category> = validationResult.data; 
    await updateEntityById("categories",req,res,reqBody);
 
 })
