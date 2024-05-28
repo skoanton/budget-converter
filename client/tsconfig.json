@@ -21,6 +21,6 @@
       "@/*": ["./src/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "scripts/**/*.ts", "src/lib/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "scripts/**/*.ts", "src/lib/**/*.ts", "src/hooks/useGetCategoryIDts"],
   "exclude": ["node_modules"]
 }
