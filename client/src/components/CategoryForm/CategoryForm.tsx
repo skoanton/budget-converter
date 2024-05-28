@@ -225,7 +225,10 @@ export default function CategoryForm(props: CategoryFormProps) {
                         COLLECTION_NAMES.EXPENSES_CATEGORIES ? (
                           expenseCategories.length > 0 ? (
                             expenseCategories.map((category) => (
-                              <SelectItem key={category.id} value={category.id}>
+                              <SelectItem
+                                key={category.id}
+                                value={category.id!.toString()}
+                              >
                                 {category.name}
                               </SelectItem>
                             ))
@@ -238,7 +241,10 @@ export default function CategoryForm(props: CategoryFormProps) {
                           COLLECTION_NAMES.INCOME_CATEGORIES ? (
                           incomeCategories.length > 0 ? (
                             incomeCategories.map((category) => (
-                              <SelectItem key={category.id} value={category.id}>
+                              <SelectItem
+                                key={category.id}
+                                value={category.id!.toString()}
+                              >
                                 {category.name}
                               </SelectItem>
                             ))

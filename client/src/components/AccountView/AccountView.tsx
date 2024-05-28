@@ -1,6 +1,6 @@
 "use client";
 import { getAccounts } from "@/lib/getAccounts";
-import { Account } from "@/types/accountType";
+import { Account } from "@/typesss/accountType";
 import { useEffect, useState } from "react";
 import AccountCard from "./AccountCard";
 

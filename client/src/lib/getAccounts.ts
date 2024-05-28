@@ -1,6 +1,6 @@
 import { getDocs, collection, doc, DocumentReference } from "firebase/firestore";
 import { db } from "./firebase";
-import { Account } from "@/types/accountType";
+import { Account } from "@/typesss/accountType";
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 
 export const getAccounts = async (): Promise<Account[]> => {

@@ -1,5 +1,6 @@
 import { fetchDocument } from "@/lib/fetchDocument";
-import { Account } from "@/types/accountType";
+import { Account } from "@/types/accounts";
+
 
 import { DocumentReference } from "firebase/firestore";
 import { useEffect, useState } from "react";

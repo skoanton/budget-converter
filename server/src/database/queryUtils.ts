@@ -1,5 +1,6 @@
-import pool from "./connection";
+
 import { ResultSetHeader } from "mysql2";
+import pool from "./connection";
 
 export async function SelectQuery<T>(
   queryString: string, params?:any[]
@@ -9,8 +10,14 @@ export async function SelectQuery<T>(
 }
 
 export async function ModifyQuery(
-  queryString: string, params?:any []
+  queryString: string, params?:any[]
 ): Promise<ResultSetHeader> {
-  const [results] = await pool.execute(queryString, params );
-  return results as ResultSetHeader;
+  console.log(queryString,[params]);
+  try {
+    const [results] = await pool.execute(queryString, params);
+    return results as ResultSetHeader;
+  } catch (error) {
+    console.error('Error executing query:', error);
+    throw error;
+  }
 }

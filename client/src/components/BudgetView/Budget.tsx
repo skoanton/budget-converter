@@ -22,10 +22,15 @@ export default function Budget() {
           title={"Expense Budget"}
           categoryType={CATEGORY_TYPES.EXPENSE}
         />
-        <hr />
+
         <BudgetView
           title={"Income Budget"}
           categoryType={CATEGORY_TYPES.INCOME}
+        />
+
+        <BudgetView
+          title={"Saving Budget"}
+          categoryType={CATEGORY_TYPES.SAVINGS}
         />
       </div>
     </>

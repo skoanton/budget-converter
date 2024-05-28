@@ -2,7 +2,7 @@ import {  doc, getDoc } from "firebase/firestore";
 
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 import { db } from "./firebase";
-import { Account } from "@/types/accountType";
+import { Account } from "@/typesss/accountType";
 
 
 export const getAccountById = async (accountId:string,):Promise<Account | null> => {

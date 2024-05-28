@@ -2,7 +2,7 @@ import { DocumentReference, collection, getDocs, query, where } from "firebase/f
 
 
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
-import { Account } from "@/types/accountType";
+import { Account } from "@/typesss/accountType";
 import { db } from "./firebase";
 
 export const getAccountReferenceByName = async (name:string): Promise<DocumentReference<Account> | null> => {

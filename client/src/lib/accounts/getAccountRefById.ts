@@ -2,7 +2,7 @@ import { DocumentReference, collection, doc, getDocs, query, where } from "fireb
 
 
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
-import { Account } from "@/types/accountType";
+import { Account } from "@/typesss/accountType";
 import { db } from "../firebase";
 
 

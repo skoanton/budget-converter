@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useGetCategories } from "./useGetCategories";
 import { processTransactions } from "@/utils/processTransactions";
-import { Account } from "@/types/accountType";
+import { Account } from "@/typesss/accountType";
 import { Transaction } from "@/types/transactionsType";
 
 

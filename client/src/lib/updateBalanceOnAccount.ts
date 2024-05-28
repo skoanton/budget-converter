@@ -2,7 +2,7 @@
 import { getAccounts } from "./getAccounts"
 import { DocumentReference, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { Account } from "@/types/accountType";
+import { Account } from "@/typesss/accountType";
 
 
 export const updateAmountOnAccount = async (accountToChange:DocumentReference<Account>,amount:number) => {

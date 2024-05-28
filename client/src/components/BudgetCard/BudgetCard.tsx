@@ -1,11 +1,12 @@
 "use client";
-import { Category } from "@/types/transactionsType";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { deleteCategory } from "@/lib/categories/deleteCategory";
 import { Button } from "../ui/button";
 import { CATEGORY_TYPES, COLLECTION_NAMES } from "@/constants/collectionsNames";
 import { Trash2 } from "lucide-react";
+import { Category } from "@/types/categories";
 type BudgetCardProps = {
   category: Category;
   categoryType: {
@@ -20,11 +21,11 @@ export default function BudgetCard({
 }: BudgetCardProps) {
   const handleDelete = async () => {
     /*  await deleteCategory(categoryType, category.id); */
+    console.log("tjo du kan inte köra denna nu hörru");
   };
-
-  const spentAmount = Math.round(Math.abs(category.spentAmount));
-  const budgetDif =
-    Math.round(Math.abs(category.spentAmount)) - category.budgetLimit;
+  console.log("Budget card");
+  const spentAmount = Math.round(Math.abs(category.spent));
+  const budgetDif = Math.round(Math.abs(category.spent)) - category.budget;
 
   return (
     <>
@@ -43,7 +44,7 @@ export default function BudgetCard({
                   Income:{" "}
                   <span className="font-normal">
                     {" "}
-                    {spentAmount}/{category.budgetLimit} kr
+                    {spentAmount}/{category.budget} kr
                   </span>
                 </p>
                 <p className="font-bold">
@@ -64,8 +65,8 @@ export default function BudgetCard({
                     Spent:{" "}
                     <span className="font-normal">
                       {" "}
-                      {Math.round(Math.abs(category.spentAmount))}/
-                      {category.budgetLimit} kr
+                      {Math.round(Math.abs(category.spent))}/{category.budget}{" "}
+                      kr
                     </span>
                   </p>
                   <p className="font-bold">

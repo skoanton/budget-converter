@@ -1,12 +1,10 @@
 "use client";
 import CreateBudgetCard from "../BudgetCard/CreateBudgetCard";
-import { Button } from "../ui/button";
-import { deleteAllCategories } from "@/lib/categories/deleteAllCategories";
+
 import { useGetCategories } from "@/hooks/useGetCategories";
 import BudgetCard from "../BudgetCard/BudgetCard";
-import { CATEGORY_TYPES, COLLECTION_NAMES } from "@/constants/collectionsNames";
-import { useEffect, useState } from "react";
-import { Category } from "@/types/transactionsType";
+import { CATEGORY_TYPES } from "@/constants/collectionsNames";
+
 import {
   Accordion,
   AccordionContent,
@@ -14,6 +12,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import SortBudget from "./SortBudget";
+import { useEffect, useState } from "react";
+import { Category } from "@/types/categories";
+import axios from "axios";
 type BudgetViewProps = {
   title: string;
   categoryType: {
@@ -23,7 +24,41 @@ type BudgetViewProps = {
 };
 
 export default function BudgetView({ title, categoryType }: BudgetViewProps) {
-  const { expenseCategories, incomeCategories } = useGetCategories();
+  /* const { expenseCategories, incomeCategories } = useGetCategories(); */
+  const [incomeCategories, setIncomeCategories] = useState<Category[]>([]);
+  const [expenseCategories, setExpenseCategories] = useState<Category[]>([]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      if (categoryType === CATEGORY_TYPES.INCOME) {
+        try {
+          const fetchedIncomeCategories = await axios.get(
+            "http://localhost:8801/api/categories/income"
+          );
+          console.log("fetchedIncomecategories", fetchedIncomeCategories.data);
+          setIncomeCategories(fetchedIncomeCategories.data as Category[]);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      }
+      if (categoryType === CATEGORY_TYPES.EXPENSE) {
+        try {
+          const fetchedExpenseCategories = await axios.get(
+            "http://localhost:8801/api/categories/expense"
+          );
+          console.log(
+            "fetchedExpenseCategories",
+            fetchedExpenseCategories.data
+          );
+          setExpenseCategories(fetchedExpenseCategories.data as Category[]);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      }
+    };
+
+    fetchCategories();
+  }, []);
+  console.log(expenseCategories.length);
   return (
     <>
       <Accordion type="single" collapsible>
@@ -36,24 +71,26 @@ export default function BudgetView({ title, categoryType }: BudgetViewProps) {
               {categoryType === CATEGORY_TYPES.EXPENSE ? (
                 <>
                   <CreateBudgetCard categoryType={CATEGORY_TYPES.EXPENSE} />
-                  {expenseCategories.map((expenseCategory) => (
-                    <BudgetCard
-                      key={expenseCategory.id}
-                      category={expenseCategory}
-                      categoryType={categoryType}
-                    />
-                  ))}
+                  {expenseCategories.length > 0 &&
+                    expenseCategories.map((expenseCategory) => (
+                      <BudgetCard
+                        key={expenseCategory.id}
+                        category={expenseCategory}
+                        categoryType={categoryType}
+                      />
+                    ))}
                 </>
               ) : categoryType === CATEGORY_TYPES.INCOME ? (
                 <>
                   <CreateBudgetCard categoryType={CATEGORY_TYPES.INCOME} />
-                  {incomeCategories.map((incomeCategory) => (
-                    <BudgetCard
-                      key={incomeCategory.id}
-                      category={incomeCategory}
-                      categoryType={categoryType}
-                    />
-                  ))}
+                  {incomeCategories.length > 0 &&
+                    incomeCategories.map((incomeCategory) => (
+                      <BudgetCard
+                        key={incomeCategory.id}
+                        category={incomeCategory}
+                        categoryType={categoryType}
+                      />
+                    ))}
                 </>
               ) : null}
             </div>

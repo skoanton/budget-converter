@@ -1,5 +1,6 @@
 import { DocumentReference } from 'firebase/firestore';
 import { Account } from './accountType';
+import { Category } from './categories';
 export type Transaction = {
     id: string,
     account: DocumentReference<Account>,
@@ -10,10 +11,3 @@ export type Transaction = {
     category: DocumentReference<Category>,
 }
 
-export type Category = {
-    id: string,
-    name: string,
-    description: string,
-    spentAmount: number,
-    budgetLimit:  number,
-}

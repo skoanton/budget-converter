@@ -1,73 +1,57 @@
-import { COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { CATEGORY_TYPES, COLLECTION_NAMES } from "@/constants/collectionsNames";
 import { db } from "@/lib/firebase";
-import { Category } from "@/types/transactionsType";
+import { Category } from "@/types/categories";
+
 import { sortCategory } from "@/utils/sortCategory";
+import axios from "axios";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { number, string } from "zod";
 
 interface Categories {
   incomeCategories: Category[];
   expenseCategories: Category[];
 }
-export const useGetCategories = (): Categories => {
+
+interface CategoryType{
+  name: string,
+  id:number;
+}
+
+export const useGetCategories = (categoryType:CategoryType): Categories => {
     const [incomeCategories,setIncomeCategories]= useState<Category[]>([]);
-    const [expenseCategories,setExpensCategories]= useState<Category[]>([]);
+    const [expenseCategories,setExpenseCategories]= useState<Category[]>([]);
     useEffect(() => {
       
+      const fetchCategories = async () => {
+        if (categoryType === CATEGORY_TYPES.INCOME) {
           try {
-            const expenseCategoryQuery = query(
-              collection(db, COLLECTION_NAMES.EXPENSES_CATEGORIES)
+            const fetchedIncomeCategories = await axios.get(
+              "http://localhost:8801/api/categories/income"
             );
-            const incomeCategoryQuery = query(
-              collection(db, COLLECTION_NAMES.INCOME_CATEGORIES)
-            );
-        
-            const expenseCategoryListner = onSnapshot(
-              expenseCategoryQuery,
-              (expeneSnapshot) => {
-                const fetchedExpenseCategories: Category[] = [];
-                expeneSnapshot.forEach((expenseDoc) => {
-                  const expenseData = expenseDoc.data();
-        
-                  fetchedExpenseCategories.push({
-                    id: expenseDoc.id,
-                    name: expenseData.name,
-                    description: expenseData.description,
-                    spentAmount: expenseData.spentAmount,
-                    budgetLimit: expenseData.budgetLimit,
-                  });
-                });
-                const sorted = sortCategory(fetchedExpenseCategories);
-                setExpensCategories(sorted);
-                }
-              );
-        
-            const incomeCategoryListner = onSnapshot(
-              incomeCategoryQuery,
-              (incomeSnapshot) => {
-                const fetchedIncomeCategories: Category[] = [];
-                incomeSnapshot.forEach((incomeDoc) => {
-                  const incomeData = incomeDoc.data();
-                  fetchedIncomeCategories.push({
-                    id: incomeDoc.id,
-                    name: incomeData.name,
-                    description: incomeData.description,
-                    spentAmount: incomeData.spentAmount,
-                    budgetLimit: incomeData.budgetLimit,
-                  });
-                });
-                const sorted = sortCategory(fetchedIncomeCategories);
-                setIncomeCategories(sorted)
-              }
-            );
-            
-            return () => {
-              expenseCategoryListner();
-              incomeCategoryListner();
-            }
+            console.log("fetchedIncomecategories", fetchedIncomeCategories.data);
+            setIncomeCategories(fetchedIncomeCategories.data as Category[]);
           } catch (error) {
             console.error("Error fetching categories:", error);
           }
+        }
+        if (categoryType === CATEGORY_TYPES.EXPENSE) {
+          try {
+            const fetchedExpenseCategories = await axios.get(
+              "http://localhost:8801/api/categories/expense"
+            );
+            console.log(
+              "fetchedExpenseCategories",
+              fetchedExpenseCategories.data
+            );
+            setExpenseCategories(fetchedExpenseCategories.data as Category[]);
+          } catch (error) {
+            console.error("Error fetching categories:", error);
+          }
+        }
+      };
+
+        fetchCategories();
        
       }, []);
 
