@@ -5,22 +5,16 @@ import CategoryForm from "./CategoryForm/CategoryForm";
 import TransactionCard from "./Transactioncard/TransactionCard";
 import { COLLECTION_NAMES } from "@/constants/collectionsNames";
 import { Transaction } from "@/types/transactions";
+import { useTransactionStore } from "@/lib/store/useTransactionStore";
 
-type AddCategoryProps = {
-  transactions: Transaction[];
-  onHandleUpdateTransactions: (
-    newCategorizedTransactions: Transaction[]
-  ) => void;
-};
-export default function AddCategory({
-  transactions,
-  onHandleUpdateTransactions,
-}: AddCategoryProps) {
+export default function AddCategory() {
   const [currentForm, setCurrentForm] = useState(0);
-  console.log("Transactions in add category", transactions);
+
+  const { uncategorizedTransactions } = useTransactionStore.getState();
+
   return (
     <>
-      {transactions.map((transaction, index) => {
+      {uncategorizedTransactions.map((transaction, index) => {
         return (
           currentForm === index && (
             <div
@@ -28,12 +22,7 @@ export default function AddCategory({
               className="flex flex-col justify-center items-center"
             >
               <TransactionCard key={index} transaction={transaction} />
-              <CategoryForm
-                addCategory={true}
-                transaction={transaction}
-                transactions={transactions}
-                onHandleUpdateTransactions={onHandleUpdateTransactions}
-              />
+              <CategoryForm addCategory={true} transaction={transaction} />
             </div>
           )
         );

@@ -1,6 +1,5 @@
 "use client";
 import { useGetCategories } from "@/hooks/useGetCategories";
-import { updateTransactions } from "@/lib/updateTransactions";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -22,12 +21,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { addDescriptionToCategory } from "@/lib/categories/addDescriptionToCategory";
 import { CATEGORY_TYPES } from "@/constants/collectionsNames";
 import { Transaction } from "@/types/transactions";
 import { Category, CategoryType } from "@/types/categories";
 import { useGetEntityById } from "@/hooks/useGetEntityById";
 import { getEntitiyById } from "@/lib/getEntityById";
+import { useTransactionStore } from "@/lib/store/useTransactionStore";
 
 const formSchema = z.object({
   category: z.string(),
@@ -46,10 +45,6 @@ type CategoryFormChangeProps = {
 type CategoryFormAddProps = {
   addCategory: true;
   transaction: Transaction;
-  transactions: Transaction[];
-  onHandleUpdateTransactions: (
-    newCategorizedTransactions: Transaction[]
-  ) => void;
 };
 
 type CategoryFormProps = CategoryFormBaseProps &
@@ -68,6 +63,7 @@ function isAddCategory(
 }
 
 export default function CategoryForm(props: CategoryFormProps) {
+  const { transactions, updateTransaction } = useTransactionStore.getState();
   const { expenseCategories, incomeCategories } = useGetCategories();
   const { entity: currentCategoryType } = useGetEntityById<CategoryType>(
     props.transaction.amount > 0 ? 1 : 2,
@@ -79,41 +75,23 @@ export default function CategoryForm(props: CategoryFormProps) {
       category: "",
     },
   });
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     handleSubmit(values.category);
   }
 
-  const fetchCategory = async (
-    categoryId: string
-  ): Promise<Category | null> => {
-    try {
-      const fetchedCategory = await getEntitiyById<Category>(
-        Number(categoryId),
-        "/categories"
-      );
-
-      return fetchedCategory;
-    } catch (error) {
-      console.error("Could not fetch category");
-      return null;
-    }
-  };
-
-  const fetchAndUpdateCategory = async (
+  const fetchAndAddCategory = async (
     transaction: Transaction,
-    transactions: Transaction[],
-    onHandleUpdateTransactions: (
-      newCategorizedTransactions: Transaction[]
-    ) => void,
     categoryID: string
   ) => {
-    const category = await fetchCategory(categoryID);
+    const category = await getEntitiyById<Category>(
+      Number(categoryID),
+      "/categories"
+    );
 
     if (category) {
       console.log("Fetched category:", category);
       try {
-        await addDescriptionToCategory(transaction.description_ID, category);
-
         const newCategorizedTransactions = transactions.filter((trans) => {
           return (
             trans.description_ID === transaction.description_ID &&
@@ -122,10 +100,8 @@ export default function CategoryForm(props: CategoryFormProps) {
         });
 
         newCategorizedTransactions.forEach((trans) => {
-          trans.category_ID = category.id!;
+          updateTransaction(trans.id!, category.id!);
         });
-
-        onHandleUpdateTransactions(newCategorizedTransactions);
       } catch (error) {
         console.error(
           "Error adding description to category or updating transactions:",
@@ -139,28 +115,16 @@ export default function CategoryForm(props: CategoryFormProps) {
 
   const handleSubmit = async (categoryID: string) => {
     if (isAddCategory(props)) {
-      const { transaction, transactions, onHandleUpdateTransactions } = props;
-      await fetchAndUpdateCategory(
-        transaction,
-        transactions,
-        onHandleUpdateTransactions,
-        categoryID
-      );
+      const { transaction } = props;
+      await fetchAndAddCategory(transaction, categoryID);
     }
 
     if (isChangeCategory(props)) {
-      if (category) {
-        const { transaction } = props;
-
-        const newTransactionData: Transaction = {
-          ...transaction,
-          category_ID: category.id!,
-        };
-        try {
-          await updateTransactions(newTransactionData);
-        } catch (error) {
-          console.error("Error updating transaction:", error);
-        }
+      const { transaction } = props;
+      if (transaction.id) {
+        updateTransaction(transaction.id, Number(categoryID));
+      } else {
+        console.error("No transaction ID");
       }
     }
   };
