@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import CategoryForm from "./CategoryForm/CategoryForm";
-import TransactionCard from "./Transactioncard/TransactionCard";
 import { useTransactionStore } from "@/lib/store/useTransactionStore";
+import TransactionCard from "@/app/add-transactions/components/TransactionCard";
 
 export default function AddCategory() {
   const [currentForm, setCurrentForm] = useState(0);

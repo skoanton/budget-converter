@@ -1,9 +1,7 @@
 "use client";
-import { deleteAllCategories } from "@/lib/categories/deleteAllCategories";
-import { Button } from "../ui/button";
+
 import BudgetView from "./BudgetView";
-import { createCategory } from "@/lib/categories/createCategory";
-import { CATEGORY_TYPES, COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { CATEGORY_TYPES } from "@/constants/collectionsNames";
 import SortBudget from "./SortBudget";
 import { useState } from "react";
 

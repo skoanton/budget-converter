@@ -1,4 +1,4 @@
-import Budget from "@/components/BudgetView/Budget";
+import Budget from "./components/Budget";
 
 export default function BudgetPage() {
   return (

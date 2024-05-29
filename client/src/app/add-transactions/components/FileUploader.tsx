@@ -1,7 +1,7 @@
 "use client";
-import { Input } from "./ui/input";
-import ProcessingTransactionView from "./ProcessingTransactionView/ProcessingTransactionView";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import ProcessingTransactionView from "./ProcessingTransactionView";
 
 export default function FileUploader() {
   const [text, setText] = useState("");

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Button } from "../ui/button";
 import {
   ArrowRightLeft,
+  BookDashed,
   CircleDollarSign,
   CloudUpload,
   CreditCard,
@@ -33,6 +33,10 @@ export default function Navbar() {
           <li className="text-2xl text-primary-foreground flex gap-2 items-center hover:underline">
             <CreditCard />
             <Link href="/accounts">Accounts</Link>
+          </li>
+          <li className="text-2xl text-primary-foreground flex gap-2 items-center hover:underline">
+            <BookDashed />
+            <Link href="/budget/budget-templete">Monthly budget</Link>
           </li>
         </ul>
       </nav>

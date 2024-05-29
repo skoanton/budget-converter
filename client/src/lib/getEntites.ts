@@ -3,7 +3,6 @@ import { apiRequest } from "./api";
 export async function getEntites<T> (endPoint:string): Promise<T[] | null> {
 
     try {
-        
         const entites:T[] = await apiRequest(endPoint); 
 
         if(entites.length> 0){

@@ -1,9 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import TransactionRow from "./TransactionRow";
-import { useEffect, useState } from "react";
-import { getTransactionsByAccount } from "@/lib/transactions/getTransactionsByAccount";
 import { Transaction } from "@/types/transactions";
 import { useGetEntities } from "@/hooks/useGetEntities";
 
