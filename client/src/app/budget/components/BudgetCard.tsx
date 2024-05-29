@@ -2,11 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Button } from "../ui/button";
 import { CATEGORY_TYPES } from "@/constants/collectionsNames";
-import { Trash2 } from "lucide-react";
 import { Category } from "@/types/categories";
-import { deletePost } from "@/lib/deletePost";
 type BudgetCardProps = {
   category: Category;
   categoryType: {
@@ -19,11 +16,6 @@ export default function BudgetCard({
   category,
   categoryType,
 }: BudgetCardProps) {
-  const handleDelete = async () => {
-    await deletePost(category.id!.toString(), "/categories");
-    console.log("Deleted");
-  };
-
   const spentAmount = Math.round(Math.abs(category.spent));
   const budgetDif = Math.round(Math.abs(category.spent)) - category.budget;
 
@@ -32,9 +24,6 @@ export default function BudgetCard({
       <Card>
         <CardHeader className=" flex-row justify-between items-center">
           <CardTitle>{category.name}</CardTitle>
-          <Button variant={"ghost"} onClick={handleDelete}>
-            <Trash2 />
-          </Button>
         </CardHeader>
         <Link href={`budget/${category.id}`}>
           <CardContent>

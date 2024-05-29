@@ -1,12 +1,14 @@
 import { useProcessTransactions } from "@/hooks/useProcessTransactions";
 import { useEffect, useState } from "react";
-import TransactionCard from "../Transactioncard/TransactionCard";
-import AddCategory from "../AddCategory";
-import { Button } from "../ui/button";
+
 import { uploadTransactions } from "@/lib/uploadTransactions";
-import CreateNewAccountForm from "../CreateNewAccountForm/CreateNewAccountForm";
-import Loading from "../Loading/Loading";
+
 import { useTransactionStore } from "@/lib/store/useTransactionStore";
+import Loading from "@/components/Loading/Loading";
+import TransactionCard from "./TransactionCard";
+import AddCategory from "@/components/AddCategory";
+import { Button } from "@/components/ui/button";
+import CreateNewAccountForm from "./CreateNewAccountForm";
 
 type ProcessingTransactionViewProps = {
   text: string;

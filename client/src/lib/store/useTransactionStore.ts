@@ -58,6 +58,7 @@ export const useTransactionStore = create<TransactionState>()((set) => ({
                 };
             }),
         clearTransactions: () => set({categorizedTransactions:[], uncategorizedTransactions:[]}),
+        
 
 }));
 

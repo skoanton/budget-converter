@@ -1,26 +1,27 @@
 "use client";
-import TransactionDetails from "@/components/TransactionDetails/TransactionDetails";
-import { getTransactionById } from "@/lib/getTransactionById";
-import { Transaction } from "@/types/transactionsType";
+
+import { useGetEntityById } from "@/hooks/useGetEntityById";
+import { getEntites } from "@/lib/getEntites";
+import { getEntitiyById } from "@/lib/getEntityById";
+import { Transaction } from "@/types/transactions";
 import { lstat } from "fs";
 import { useEffect, useState } from "react";
+import TransactionDetails from "./components/TransactionDetails";
+import Loading from "@/components/Loading/Loading";
 
 export default function TransactionDetailsPage({
   params,
 }: {
   params: { transactionId: string };
 }) {
-  console.log(params.transactionId);
+  const { entity: transaction, loading } = useGetEntityById<Transaction>(
+    Number(params.transactionId),
+    "/transactions"
+  );
 
-  const [transaction, setTransaction] = useState<Transaction>();
-
-  useEffect(() => {
-    const fetchTransaction = async () => {
-      const fetchedTransaction = await getTransactionById(params.transactionId);
-      setTransaction(fetchedTransaction);
-    };
-    fetchTransaction();
-  }, []);
+  if (loading) {
+    return <Loading />;
+  }
 
   if (transaction) {
     return <TransactionDetails transaction={transaction} />;

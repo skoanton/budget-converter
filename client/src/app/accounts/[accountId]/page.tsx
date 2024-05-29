@@ -5,9 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import TransactionRow from "@/components/TransactionTable/TransactionRow";
-import { useGetTransactionsByAccount } from "@/hooks/useGetTransactionsByAccount";
-import TransactionTable from "@/components/TransactionTable/TransactionTable";
+import TransactionTable from "@/app/transactions/components/TransactionTable/TransactionTable";
 
 export default function AccountInformationPage({
   params,

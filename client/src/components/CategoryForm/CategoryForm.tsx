@@ -66,7 +66,7 @@ export default function CategoryForm(props: CategoryFormProps) {
     });
 
     newCategorizedTransactions.forEach((trans) => {
-      if (typeof trans.id === "string") {
+      if (typeof trans.id === "string" && typeof category.id !== "string") {
         updateTransaction(trans.id, category.id!);
       } else {
         console.error("Transaction ID is not a string");

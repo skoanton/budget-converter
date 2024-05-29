@@ -1,6 +1,4 @@
-import { Category } from "@/types/transactionsType";
-
-
+import { Category } from "@/types/categories";
 export const sortCategory = (arrayToSort:Category[]): Category[] => {
 
     return arrayToSort.sort((a, b) => {

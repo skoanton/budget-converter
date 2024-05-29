@@ -1,5 +1,3 @@
-import {doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase";
 import { apiRequest } from "../api";
 import { Category } from "@/types/categories";
 

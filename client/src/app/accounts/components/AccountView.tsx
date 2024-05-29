@@ -1,9 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
 import AccountCard from "./AccountCard";
 import { Account } from "@/types/accounts";
 import { useGetEntities } from "@/hooks/useGetEntities";
-import Loading from "../Loading/Loading";
+import Loading from "@/components/Loading/Loading";
 
 export default function AccountView() {
   const { entities: accounts, loading } = useGetEntities<Account>("/accounts");

@@ -1,7 +1,7 @@
 "use client";
-import CreateBudgetCard from "../BudgetCard/CreateBudgetCard";
+
 import { useGetCategories } from "@/hooks/useGetCategories";
-import BudgetCard from "../BudgetCard/BudgetCard";
+
 import { CATEGORY_TYPES } from "@/constants/collectionsNames";
 import {
   Accordion,
@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import BudgetCard from "./BudgetCard";
 type BudgetViewProps = {
   title: string;
   categoryType: {
@@ -19,8 +20,6 @@ type BudgetViewProps = {
 
 export default function BudgetView({ title, categoryType }: BudgetViewProps) {
   const { expenseCategories, incomeCategories } = useGetCategories();
-
-  console.log(expenseCategories.length);
   return (
     <>
       <Accordion type="single" collapsible>
@@ -32,7 +31,6 @@ export default function BudgetView({ title, categoryType }: BudgetViewProps) {
             <div className="grid grid-cols-5 gap-2">
               {categoryType === CATEGORY_TYPES.EXPENSE ? (
                 <>
-                  <CreateBudgetCard categoryType={CATEGORY_TYPES.EXPENSE} />
                   {expenseCategories.length > 0 &&
                     expenseCategories.map((expenseCategory) => (
                       <BudgetCard
@@ -44,7 +42,6 @@ export default function BudgetView({ title, categoryType }: BudgetViewProps) {
                 </>
               ) : categoryType === CATEGORY_TYPES.INCOME ? (
                 <>
-                  <CreateBudgetCard categoryType={CATEGORY_TYPES.INCOME} />
                   {incomeCategories.length > 0 &&
                     incomeCategories.map((incomeCategory) => (
                       <BudgetCard
