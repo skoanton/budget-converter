@@ -1,4 +1,13 @@
 "use-client";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useGetEntityById } from "@/hooks/useGetEntityById";
 import { Account } from "@/types/accounts";
 import { Category } from "@/types/categories";
@@ -21,17 +30,16 @@ export default function TransactionRow({ transaction }: TransactionRowProps) {
 
   return (
     <>
-      <tr key={transaction.id} className="text-center">
-        <td className="border">
+      <TableRow>
+        <TableCell>{transaction.date.toLocaleDateString()}</TableCell>
+        <TableCell>{account?.name}</TableCell>
+        <TableCell className="font-medium">
           <Link href={`/transactions/${transaction.id}`}>
             {description?.name}{" "}
           </Link>
-        </td>
-        <td className="border">{account?.name}</td>
-        <td className="border">{category?.name}</td>
-        <td className="border">{transaction.date.toLocaleDateString()}</td>
-        <td className="border">{transaction.amount} kr</td>
-      </tr>
+        </TableCell>
+        <TableCell className="text-right">{transaction.amount} kr</TableCell>
+      </TableRow>
     </>
   );
 }

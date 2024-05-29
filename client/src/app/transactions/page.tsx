@@ -1,5 +1,4 @@
 import TransactionTable from "@/app/transactions/components/TransactionTable/TransactionTable";
-import { getTransactions } from "@/lib/getTransactions";
 
 export default async function TransactionsPage() {
   return <TransactionTable allTransactions={true} />;

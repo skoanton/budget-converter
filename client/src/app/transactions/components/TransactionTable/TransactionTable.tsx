@@ -1,5 +1,13 @@
 "use client";
-
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import TransactionRow from "./TransactionRow";
 import { Transaction } from "@/types/transactions";
 import { useGetEntities } from "@/hooks/useGetEntities";
@@ -26,17 +34,17 @@ export default function TransactionTable(props: TransactionTableProps) {
 
   return (
     <>
-      <table className="w-full">
-        <thead>
-          <tr className="border">
-            <th className="border">Description</th>
-            <th className="border">Account</th>
-            <th className="border">Category</th>
-            <th className="border">Date</th>
-            <th className="border">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableCaption>A list of your recent transactions</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px]">Date</TableHead>
+            <TableHead>Account</TableHead>
+            <TableHead>Description</TableHead>
+            <TableHead className="text-right">Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {transactions &&
             transactions.map((transaction) => {
               return (
@@ -46,8 +54,9 @@ export default function TransactionTable(props: TransactionTableProps) {
                 />
               );
             })}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
+      ;
     </>
   );
 }
