@@ -1,10 +1,14 @@
 import { Router } from "express";
-import { getAllEntities } from "../utils/getAllEntities";
-import { getEntitiesById } from "../utils/getEntitiesById";
+
 import { Description } from "../../types/descriptions";
-import { getEntitiesByName } from "../utils/getEntitiesByName";
+
 import z from "zod";
-import { handlePostRequest } from "../utils/handlePostRequest";
+import { getAllPosts } from "../../lib/getAllPosts";
+import { getPostByName } from "../../lib/getPostByName";
+import { handlePostRequest } from "../../lib/handlePostRequest";
+import { getPostById } from "../../lib/getPostsById";
+
+
 
 
 const descriptionSchema = z.object({
@@ -13,15 +17,15 @@ const descriptionSchema = z.object({
 
 const router = Router();
 router.get("/", async(req,res) => {
-   await getAllEntities<Description>("descriptions",res);
+   await getAllPosts<Description>("descriptions",res);
 })
 
 router.get("/name/:name", async (req,res) => {
-   await getEntitiesByName<Description>("descriptions",req,res);
+   await getPostByName<Description>("descriptions",req,res);
 })
 
 router.get("/id/:id",async(req,res) => {
-   await getEntitiesById<Description>("descriptions",req,res);
+   await getPostById<Description>("descriptions",req,res);
 })
 
 

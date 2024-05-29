@@ -1,10 +1,12 @@
 import { Router } from "express";
 import z from "zod";
 import { Account } from "../../types/accounts";
-import { getAllEntities } from "../utils/getAllEntities";
-import { getEntitiesById } from "../utils/getEntitiesById";
-import { handlePostRequest } from "../utils/handlePostRequest";
-import { getEntitiesByName } from "../utils/getEntitiesByName";
+
+import { getAllPosts } from "../../lib/getAllPosts";
+import { getPostById } from "../../lib/getPostsById";
+import { getPostByName } from "../../lib/getPostByName";
+import { handlePostRequest } from "../../lib/handlePostRequest";
+
 
 
 const router = Router();
@@ -16,16 +18,16 @@ const accountSchema = z.object({
 
 router.get("/", async (req,res) => {
 
-   await getAllEntities<Account>("accounts",res);
+   await getAllPosts<Account>("accounts",res);
 
 })
 
 router.get("/id/:id", async (req,res) => {
-    await getEntitiesById<Account>("accounts",req,res);
+    await getPostById<Account>("accounts",req,res);
 })
 
 router.get("/name/:name", async (req,res) => {
-    await getEntitiesByName<Account>("accounts",req,res);
+    await getPostByName<Account>("accounts",req,res);
 })
 
 router.post("/", async (req,res) => {

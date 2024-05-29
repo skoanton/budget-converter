@@ -1,10 +1,13 @@
 import { Router } from "express"
-import { getAllEntities } from "../utils/getAllEntities";
-import { getEntitiesById } from "../utils/getEntitiesById";
+
 import z from "zod";
 import { Transaction } from "../../types/transactions";
-import { handlePostRequest } from "../utils/handlePostRequest";
-import { updateEntityById } from "../utils/updateEntityById";
+import { getAllPosts } from "../../lib/getAllPosts";
+import { getPostById } from "../../lib/getPostsById";
+import { handlePostRequest } from "../../lib/handlePostRequest";
+import { updatePostById } from "../../lib/updatePostById";
+
+
 const router = Router();
 
 const transactionsSchema = z.object({
@@ -24,13 +27,13 @@ const formatDateForMySQL = (date: Date): string => {
 
 router.get("/",async (req,res) => {
 
-    await getAllEntities("transactions",res);
+    await getAllPosts("transactions",res);
 
 })
 
 router.get("/id/:id",async(req,res) => {
 
-   await getEntitiesById("transactions",req,res);
+   await getPostById("transactions",req,res);
 
 })
 
@@ -62,7 +65,7 @@ router.patch("/id/:id",async (req,res) => {
         ...reqBody,
         date: new Date(reqBody.date),
       };
-   await updateEntityById("transactions",req,res,formattedReqBody);
+   await updatePostById("transactions",req,res,formattedReqBody);
 
 })
 
