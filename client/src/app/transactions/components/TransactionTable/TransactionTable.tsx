@@ -56,7 +56,6 @@ export default function TransactionTable(props: TransactionTableProps) {
             })}
         </TableBody>
       </Table>
-      ;
     </>
   );
 }
