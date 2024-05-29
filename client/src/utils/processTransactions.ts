@@ -4,7 +4,7 @@ import { Category } from "@/types/categories";
 import { Transaction } from "@/types/transactions";
 import { getDescriptionIdByName } from "@/lib/descriptions/getDescriptionIdByName";
 import { getOrCreateAccount } from "./getOrCreateAccount";
-
+import { v4 as uuidv4 } from 'uuid';
 interface Categories {
   incomeCategories: Category[];
   expenseCategories: Category[];
@@ -16,7 +16,6 @@ export const processTransactions = async (
   onShowNewAccountForm: (accountName: string) => Promise<number>
 ): Promise<Transaction[]> => {
   
-
   if (!text) {
     console.error("Invalid input data");
     return [];
@@ -46,6 +45,7 @@ export const processTransactions = async (
 
           if (account && account.id && transactionCategoryId) {
             newTransactions.push({
+              id: uuidv4(),
               amount: amount,
               date: new Date(splitedTransaction[6]),
               description_ID: descriptionId,

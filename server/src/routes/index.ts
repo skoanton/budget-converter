@@ -16,6 +16,6 @@ router.use("/categories/expense",expenseCategoriesRouter);
 router.use("/accounts",accountsRouter);
 router.use("/descriptions",descriptionRouter);
 router.use("/transactions",transactionsRouter);
-router.use("/categories/description",categoryDescriptionRouter);
+router.use("/categories/descriptions",categoryDescriptionRouter);
 
 export default router;

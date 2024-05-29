@@ -10,11 +10,9 @@ export async function handlePostRequest<T>(
 ) {
   try {
     const data = await Add(reqBody,tablename);
-    console.log("Data:",data);
     if (!data) {
       return res.status(404).json({ error: "Data is empty" });
     }
-    console.log("Data:",data);
     res.json(data);
   } catch (error) {
     console.error("Error:", error); 

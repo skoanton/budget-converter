@@ -9,9 +9,8 @@ export const checkDescription = async (
   transactionDescription: string
 ): Promise<number | null> => {
 
-  const categories = await getEntites<Category>("/categories");
   const descriptions = await getEntites<Description>("/descriptions");
-const category_descriptions = await getEntites<CategoryDescription>("/categories/descriptions");
+  const category_descriptions = await getEntites<CategoryDescription>("/categories/descriptions");
 
   if (descriptions) {
     let descriptionID = descriptions.find(
@@ -24,12 +23,10 @@ const category_descriptions = await getEntites<CategoryDescription>("/categories
         (description) => description.name === transactionDescription
       )?.id;
     }
-
     if (descriptionID && category_descriptions) {
             const categoryId = category_descriptions.find((catDesc) => catDesc.description_ID === descriptionID )?.category_ID;
           return categoryId ?? 1;
         }
-    
   }
   return null;
 };

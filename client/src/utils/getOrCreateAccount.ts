@@ -19,9 +19,10 @@ export async function getOrCreateAccount(
       }
       return account;
     }
+    return account;
   } catch (error) {
     console.log("Failed to create or fetch account",error);
     return null;
   }
-  return null;
+  
 }

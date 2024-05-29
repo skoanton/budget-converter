@@ -6,7 +6,7 @@ interface TransactionState {
     categorizedTransactions: Transaction[],
     uncategorizedTransactions: Transaction[],
     addTransaction: (tansaction:Transaction) => void,
-    updateTransaction: (id: number, category_ID: number) => void,
+    updateTransaction: (id: string, category_ID: number) => void,
     clearTransactions: () => void
 }
 
@@ -16,17 +16,19 @@ export const useTransactionStore = create<TransactionState>()((set) => ({
     uncategorizedTransactions: [],
     addTransaction: (transaction) =>
         set((state) => {
-          if (transaction.category_ID !== 1) {
-            return {
-              categorizedTransactions: [...state.categorizedTransactions, transaction],
-                transactions: [...state.categorizedTransactions,transaction],
-            };
-          } else {
-            return {
-              uncategorizedTransactions: [...state.uncategorizedTransactions, transaction],
-              transactions: [...state.categorizedTransactions,transaction],
-            };
-          }
+          const updatedCategorizedTransactions = transaction.category_ID !== 1 
+          ? [...state.categorizedTransactions, transaction]
+          : state.categorizedTransactions;
+          
+        const updatedUncategorizedTransactions = transaction.category_ID === 1 
+          ? [...state.uncategorizedTransactions, transaction]
+          : state.uncategorizedTransactions;
+  
+        return {
+          transactions: [...state.transactions, transaction],
+          categorizedTransactions: updatedCategorizedTransactions,
+          uncategorizedTransactions: updatedUncategorizedTransactions,
+        };
         }),
         updateTransaction: (id, category_ID) => 
             set((state) => {
@@ -50,6 +52,7 @@ export const useTransactionStore = create<TransactionState>()((set) => ({
                 }
     
                 return {
+                    allTransactions: [...updatedCategorizedTransactions, ...updatedUncategorizedTransactions],
                     categorizedTransactions: updatedCategorizedTransactions,
                     uncategorizedTransactions: updatedUncategorizedTransactions,
                 };
