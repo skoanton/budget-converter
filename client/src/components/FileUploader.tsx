@@ -35,7 +35,6 @@ export default function FileUploader() {
           />
         </form>
       </div>
-
       <ProcessingTransactionView text={text} />
     </section>
   );

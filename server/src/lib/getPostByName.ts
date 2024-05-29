@@ -1,15 +1,17 @@
-import { table } from "console";
-import { SelectQuery } from "../../database/queryUtils";
 import { Response } from "express";
 import { Request } from "express";
-export async function getEntitiesByName<T>(
+import { getEntityByName } from "../utils/getEntityByName";
+
+
+
+export async function getPostByName<T>(
   tablename:string,
   req: Request<{ name: string }, any, any, any>,
   res: Response<any>
 ) {
   const name = decodeURIComponent(req.params.name);
   try {
-    const foundEntity = await GetByName<T>(name,tablename);
+    const foundEntity = await getEntityByName<T>(name,tablename);
     if (!foundEntity) {
       return res.status(404).json, { error: `No entitiy with ${name} found`};
     }
@@ -20,7 +22,4 @@ export async function getEntitiesByName<T>(
   }
 }
 
-export function GetByName<T>(name: string,tablename:string) {
-  const queryString = `SELECT * FROM ${tablename} WHERE name = ?;`;
-  return SelectQuery<T>(queryString, [name]);
-}
+

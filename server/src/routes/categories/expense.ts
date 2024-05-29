@@ -1,7 +1,9 @@
 import { Router } from "express";
-import { getAllEntities } from "../utils/getAllEntities";
+
 import { Category } from "../../types/categories";
-import { getCategoriesByType } from "../utils/getCategoriesByType";
+import { getCategoriesByType } from "../../lib/getCategoriesByType";
+
+
 
 
 const router = Router();

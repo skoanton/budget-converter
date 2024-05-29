@@ -1,17 +1,19 @@
 
 import { Response } from "express";
 import { Request } from "express";
-import { SelectQuery } from "../../database/queryUtils";
-export async function getEntitiesById<T>(
+import { getEntityById } from "../utils/getEntityById";
+
+
+export async function getPostById<T>(
   tablename:string,
   req: Request<{ id: string }, any, any, any>,
-  res: Response<any>
+  res: Response<any>,
 ) {
 
   const id = req.params.id;
   
   try {
-    const foundEntity = await GetById<T>(id,tablename);
+    const foundEntity = await getEntityById<T>(id,tablename);
     if (!foundEntity) {
       return res.status(404).json, { error: `No entitiy with ${id} found` };
     }
@@ -19,9 +21,4 @@ export async function getEntitiesById<T>(
   } catch (error) {
     return res.status(500).json, { error: "Internal server error" };
   }
-}
-
-export function GetById<T>(id: string,tablename:string) {
-  const queryString = `SELECT * FROM ${tablename} WHERE id = ?;`;
-  return SelectQuery<T>(queryString, [id]);
 }

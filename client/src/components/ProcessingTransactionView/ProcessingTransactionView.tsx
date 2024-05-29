@@ -1,6 +1,4 @@
 import { useProcessTransactions } from "@/hooks/useProcessTransactions";
-import { extractCategorizedTransactions } from "@/utils/extractCategorizedTransactions";
-import { extractUncategorizedTransactions } from "@/utils/extractUncategorizedTransactions";
 import { useEffect, useState } from "react";
 import TransactionCard from "../Transactioncard/TransactionCard";
 import AddCategory from "../AddCategory";
@@ -8,7 +6,7 @@ import { Button } from "../ui/button";
 import { uploadTransactions } from "@/lib/uploadTransactions";
 import CreateNewAccountForm from "../CreateNewAccountForm/CreateNewAccountForm";
 import Loading from "../Loading/Loading";
-import { Transaction } from "@/types/transactions";
+import { useTransactionStore } from "@/lib/store/useTransactionStore";
 
 type ProcessingTransactionViewProps = {
   text: string;
@@ -17,14 +15,15 @@ type ProcessingTransactionViewProps = {
 export default function ProcessingTransactionView({
   text,
 }: ProcessingTransactionViewProps) {
-  const [processedTransactions, setProcessedTransactions] = useState<
-    Transaction[]
-  >([]);
-  const [uncategorizedTransactions, setUncategorizedTransactions] = useState<
-    Transaction[]
-  >([]);
-
   const [isLoading, setIsLoading] = useState(false);
+  const { addTransaction, clearTransactions } = useTransactionStore();
+
+  const categorizedTransactions = useTransactionStore(
+    (state) => state.categorizedTransactions
+  );
+  const uncategorizedTransactions = useTransactionStore(
+    (state) => state.uncategorizedTransactions
+  );
 
   const {
     processTextTransactions,
@@ -39,34 +38,20 @@ export default function ProcessingTransactionView({
       const processTransactionsFromText = async () => {
         setIsLoading(true);
         const allTransactions = await processTextTransactions(text);
-        console.log("All transcations:", allTransactions);
-        const categorizedTransactions = await extractCategorizedTransactions(
-          allTransactions
-        );
-        setProcessedTransactions(categorizedTransactions);
-        const uncategorizedTransactions =
-          await extractUncategorizedTransactions(allTransactions);
+        console.log("All transactions:", allTransactions);
+        allTransactions.forEach((transaction) => {
+          addTransaction(transaction);
+        });
 
-        setUncategorizedTransactions(uncategorizedTransactions);
-        console.log("Uncategorized", uncategorizedTransactions);
         setIsLoading(false);
       };
-
       processTransactionsFromText();
     }
   }, [text]);
 
-  const handleUpdateTransactions = (
-    newCategorizedTransactions: Transaction[]
-  ) => {
-    setProcessedTransactions((prev) => [
-      ...prev,
-      ...newCategorizedTransactions,
-    ]);
-
-    setUncategorizedTransactions((prev) =>
-      prev.filter((trans) => !newCategorizedTransactions.includes(trans))
-    );
+  const handleUploads = () => {
+    uploadTransactions(categorizedTransactions);
+    clearTransactions();
   };
 
   return (
@@ -80,7 +65,7 @@ export default function ProcessingTransactionView({
       {!isLoading && (
         <>
           <section className="grid grid-cols-5 gap-3">
-            {processedTransactions.map((transaction) => {
+            {categorizedTransactions.map((transaction) => {
               return (
                 <TransactionCard
                   key={transaction.id}
@@ -94,19 +79,13 @@ export default function ProcessingTransactionView({
               <h2 className="text-2xl font-bold">
                 Transactions without categories
               </h2>
-              <AddCategory
-                transactions={uncategorizedTransactions}
-                onHandleUpdateTransactions={handleUpdateTransactions}
-              />
+              <AddCategory />
             </section>
           ) : (
             uncategorizedTransactions.length <= 0 &&
             text.length > 0 && (
               <div className="flex justify-center">
-                <Button
-                  size={"lg"}
-                  onClick={() => uploadTransactions(processedTransactions)}
-                >
+                <Button size={"lg"} onClick={() => handleUploads()}>
                   Upload to database
                 </Button>
               </div>

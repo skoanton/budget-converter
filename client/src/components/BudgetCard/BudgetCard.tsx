@@ -2,11 +2,11 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { deleteCategory } from "@/lib/categories/deleteCategory";
 import { Button } from "../ui/button";
-import { CATEGORY_TYPES, COLLECTION_NAMES } from "@/constants/collectionsNames";
+import { CATEGORY_TYPES } from "@/constants/collectionsNames";
 import { Trash2 } from "lucide-react";
 import { Category } from "@/types/categories";
+import { deletePost } from "@/lib/deletePost";
 type BudgetCardProps = {
   category: Category;
   categoryType: {
@@ -20,8 +20,8 @@ export default function BudgetCard({
   categoryType,
 }: BudgetCardProps) {
   const handleDelete = async () => {
-    /*  await deleteCategory(categoryType, category.id); */
-    console.log("tjo du kan inte köra denna nu hörru ;)");
+    await deletePost(category.id!.toString(), "/categories");
+    console.log("Deleted");
   };
 
   const spentAmount = Math.round(Math.abs(category.spent));

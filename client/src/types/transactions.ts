@@ -1,5 +1,5 @@
 export type Transaction={
-    id?:number,
+    id:number | string,
     amount: number,
     date: Date,
     description_ID:number,

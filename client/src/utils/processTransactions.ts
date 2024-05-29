@@ -2,11 +2,9 @@ import { removeFirstAndLastChar } from "./removeFirstAndLastChar";
 import { checkDescription } from "./checkDescription";
 import { Category } from "@/types/categories";
 import { Transaction } from "@/types/transactions";
-import { Account } from "@/types/accounts";
 import { getDescriptionIdByName } from "@/lib/descriptions/getDescriptionIdByName";
-import { getAccountByName } from "@/lib/accounts/getAccontByName";
-import { createAccount } from "@/lib/accounts/createAccount";
-
+import { getOrCreateAccount } from "./getOrCreateAccount";
+import { v4 as uuidv4 } from 'uuid';
 interface Categories {
   incomeCategories: Category[];
   expenseCategories: Category[];
@@ -30,6 +28,7 @@ export const processTransactions = async (
   //Remove title lines
   transactionLines.shift();
   transactionLines.shift();
+
   const newTransactions: Transaction[] = [];
   for (const transaction of transactionLines) {
     const splitedTransaction = transaction.split(",");
@@ -38,22 +37,15 @@ export const processTransactions = async (
       const accountName = removeFirstAndLastChar(splitedTransaction[3]);
       const description = removeFirstAndLastChar(splitedTransaction[9]);
       const amount = Number(splitedTransaction[10]);
+
       try {
         const transactionCategoryId = await checkDescription(description)
+        const account = await getOrCreateAccount(accountName,onShowNewAccountForm);
+        const descriptionId = await getDescriptionIdByName(description);
 
-        let account:Account | null = await getAccountByName(accountName);
-        if (!account) {
-          const startAmount = await onShowNewAccountForm(accountName);
-          await createAccount(accountName, startAmount);
-          account = await getAccountByName(accountName);
-          if (!account) {
-            console.error("Failed to create or retrieve account", accountName);
-          }
-        } 
-          const descriptionId = await getDescriptionIdByName(description);
-
-          if (account && account.id && transactionCategoryId && descriptionId) {
+          if (account && account.id && transactionCategoryId) {
             newTransactions.push({
+              id: uuidv4(),
               amount: amount,
               date: new Date(splitedTransaction[6]),
               description_ID: descriptionId,
@@ -62,7 +54,7 @@ export const processTransactions = async (
             });
           } 
           else {
-            console.error("Could not find the account or category ID or description ID");
+            console.error("Could not find the account or category ID");
           }
       } catch (error) {
         console.error("An error occurred while processing the transaction", error);

@@ -1,8 +1,9 @@
 import { Router } from "express";
 import z from "zod"
 import { CategoryDescription } from "../../types/categories";
-import { handlePostRequest } from "../utils/handlePostRequest";
-import { getAllEntities } from "../utils/getAllEntities";
+import { handlePostRequest } from "../../lib/handlePostRequest";
+import { getAllPosts } from "../../lib/getAllPosts";
+
 const router = Router();
 
 const categoryDescriptionSchema = z.object({
@@ -25,7 +26,7 @@ router.post("/", async (req,res) => {
 
 router.get("/",async (req,res) => {
 
-    await getAllEntities<CategoryDescription>("category_descriptions",res);
+    await getAllPosts<CategoryDescription>("category_descriptions",res);
 })
 
 

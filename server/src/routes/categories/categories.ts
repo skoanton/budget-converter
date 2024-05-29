@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { error } from "console";
 import z from "zod";
 import { Category } from "../../types/categories";
-import { getAllEntities } from "../utils/getAllEntities";
-import { handlePostRequest } from "../utils/handlePostRequest";
-import { getEntitiesById } from "../utils/getEntitiesById";
-import { updateEntityById } from "../utils/updateEntityById";
+
+import { getAllPosts } from "../../lib/getAllPosts";
+import { getPostById } from "../../lib/getPostsById";
+import { deletePostByID } from "../../lib/deletePostByID";
+import { handlePostRequest } from "../../lib/handlePostRequest";
+import { updatePostById } from "../../lib/updatePostById";
 const router = Router();
 
 const categorySchema = z.object({
@@ -25,11 +26,15 @@ const updateCategorySchema = z.object({
 
 
 router.get("/", async (req,res) => {
-    getAllEntities<Category>("categories",res);
+   await getAllPosts<Category>("categories",res);
 })
 
 router.get("/id/:id", async (req,res) => {
-    await getEntitiesById("categories",req,res);
+    await getPostById("categories",req,res);
+})
+
+router.delete("/id/:id", async (req,res) => {
+   await deletePostByID("categories",req,res);
 })
 
 router.post("/", async (req,res) => {
@@ -51,8 +56,9 @@ router.patch("/id/:id",async (req,res) => {
         return res.status(400).json({ error: validationResult.error.errors });
     }
     const reqBody: Partial<Category> = validationResult.data; 
-   await updateEntityById("categories",req,res,reqBody);
+   await updatePostById("categories",req,res,reqBody);
 
 })
 
 export default router;
+

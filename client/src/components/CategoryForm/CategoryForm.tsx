@@ -1,6 +1,5 @@
 "use client";
 import { useGetCategories } from "@/hooks/useGetCategories";
-import { updateTransactions } from "@/lib/updateTransactions";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -22,52 +21,26 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { addDescriptionToCategory } from "@/lib/categories/addDescriptionToCategory";
 import { CATEGORY_TYPES } from "@/constants/collectionsNames";
 import { Transaction } from "@/types/transactions";
 import { Category, CategoryType } from "@/types/categories";
 import { useGetEntityById } from "@/hooks/useGetEntityById";
 import { getEntitiyById } from "@/lib/getEntityById";
+import { useTransactionStore } from "@/lib/store/useTransactionStore";
 
 const formSchema = z.object({
-  category: z.string(),
+  categoryId: z.string(),
 });
 
-type CategoryFormBaseProps = {
-  changeCategory?: boolean;
-  addCategory?: boolean;
-};
-
-type CategoryFormChangeProps = {
-  changeCategory: true;
+type CategoryFormProps = {
   transaction: Transaction;
-};
-
-type CategoryFormAddProps = {
-  addCategory: true;
-  transaction: Transaction;
-  transactions: Transaction[];
-  onHandleUpdateTransactions: (
-    newCategorizedTransactions: Transaction[]
-  ) => void;
-};
-
-type CategoryFormProps = CategoryFormBaseProps &
-  (CategoryFormChangeProps | CategoryFormAddProps);
-
-function isChangeCategory(
-  props: CategoryFormProps
-): props is CategoryFormChangeProps {
-  return props.changeCategory === true;
-}
-
-function isAddCategory(
-  props: CategoryFormProps
-): props is CategoryFormAddProps {
-  return props.addCategory === true;
-}
+} & (
+  | { changeCategory: true; addCategory?: false }
+  | { changeCategory?: false; addCategory: true }
+);
 
 export default function CategoryForm(props: CategoryFormProps) {
+  const { transactions, updateTransaction } = useTransactionStore.getState();
   const { expenseCategories, incomeCategories } = useGetCategories();
   const { entity: currentCategoryType } = useGetEntityById<CategoryType>(
     props.transaction.amount > 0 ? 1 : 2,
@@ -76,91 +49,75 @@ export default function CategoryForm(props: CategoryFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      category: "",
+      categoryId: "",
     },
   });
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    handleSubmit(values.category);
+    handleSubmit(values.categoryId);
   }
 
-  const fetchCategory = async (
-    categoryId: string
-  ): Promise<Category | null> => {
-    try {
-      const fetchedCategory = await getEntitiyById<Category>(
-        Number(categoryId),
-        "/categories"
+  const addNewCategory = (transaction: Transaction, category: Category) => {
+    const newCategorizedTransactions = transactions.filter((trans) => {
+      return (
+        trans.description_ID === transaction.description_ID &&
+        Math.sign(trans.amount) === Math.sign(transaction.amount) // Lägger bara till descriptions med samma value (+ eller -)
       );
+    });
 
-      return fetchedCategory;
-    } catch (error) {
-      console.error("Could not fetch category");
-      return null;
-    }
+    newCategorizedTransactions.forEach((trans) => {
+      if (typeof trans.id === "string") {
+        updateTransaction(trans.id, category.id!);
+      } else {
+        console.error("Transaction ID is not a string");
+      }
+    });
   };
 
-  const fetchAndUpdateCategory = async (
+  const fetchAndAddCategory = async (
     transaction: Transaction,
-    transactions: Transaction[],
-    onHandleUpdateTransactions: (
-      newCategorizedTransactions: Transaction[]
-    ) => void,
     categoryID: string
   ) => {
-    const category = await fetchCategory(categoryID);
-
-    if (category) {
-      console.log("Fetched category:", category);
-      try {
-        await addDescriptionToCategory(transaction.description_ID, category);
-
-        const newCategorizedTransactions = transactions.filter((trans) => {
-          return (
-            trans.description_ID === transaction.description_ID &&
-            Math.sign(trans.amount) === Math.sign(transaction.amount) // Lägger bara till descriptions med samma value (+ eller -)
-          );
-        });
-
-        newCategorizedTransactions.forEach((trans) => {
-          trans.category_ID = category.id!;
-        });
-
-        onHandleUpdateTransactions(newCategorizedTransactions);
-      } catch (error) {
-        console.error(
-          "Error adding description to category or updating transactions:",
-          error
-        );
+    try {
+      const category = await getEntitiyById<Category>(
+        Number(categoryID),
+        "/categories"
+      );
+      if (category) {
+        addNewCategory(transaction, category);
+      } else {
+        console.error("Fetched category is undefined");
       }
-    } else {
-      console.error("Current category is undefiend");
+    } catch (error) {
+      console.error("Could not fetch category by ID", error);
     }
   };
 
   const handleSubmit = async (categoryID: string) => {
-    if (isAddCategory(props)) {
-      const { transaction, transactions, onHandleUpdateTransactions } = props;
-      await fetchAndUpdateCategory(
-        transaction,
-        transactions,
-        onHandleUpdateTransactions,
-        categoryID
+    console.log("ADD CATEGORY:", props.addCategory);
+    console.log("CHANGE CATEGORY:", props.changeCategory);
+    if (props.addCategory === props.changeCategory) {
+      console.error(
+        "Either addCategory or changeCategory must be true, but not both or neither."
       );
+      return;
     }
 
-    if (isChangeCategory(props)) {
-      if (category) {
-        const { transaction } = props;
+    if (props.addCategory) {
+      try {
+        await fetchAndAddCategory(props.transaction, categoryID);
+        console.log("Added transaction to category");
+      } catch (error) {
+        console.error("Could not fetch and add category", error);
+      }
+    }
 
-        const newTransactionData: Transaction = {
-          ...transaction,
-          category_ID: category.id!,
-        };
-        try {
-          await updateTransactions(newTransactionData);
-        } catch (error) {
-          console.error("Error updating transaction:", error);
-        }
+    if (props.changeCategory) {
+      console.log("inside changeCategory");
+      if (typeof props.transaction.id === "string") {
+        updateTransaction(props.transaction.id, Number(categoryID));
+      } else {
+        console.error("Transaction ID is not a string");
       }
     }
   };
@@ -171,7 +128,7 @@ export default function CategoryForm(props: CategoryFormProps) {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="category"
+            name="categoryId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>

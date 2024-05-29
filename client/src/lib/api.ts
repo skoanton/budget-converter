@@ -16,7 +16,6 @@ export async function apiRequest(endPoint:string,method:Method = "GET",data?:any
 
     try {
         const response = await axios(options);
-
         return response.data;    
 
     } catch (error) {
