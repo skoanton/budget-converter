@@ -6,6 +6,7 @@ import expenseCategoriesRouter from "./categories/expense";
 import accountsRouter from "./accounts/accounts";
 import descriptionRouter from "./descriptions/descriptions";
 import transactionsRouter from "./transactions/transactions";
+import categoryDescriptionRouter from "./categories/categoryDescription"
 const router = Router();
 
 router.use("/categories/types",categoriesTypeRouter);
@@ -15,5 +16,6 @@ router.use("/categories/expense",expenseCategoriesRouter);
 router.use("/accounts",accountsRouter);
 router.use("/descriptions",descriptionRouter);
 router.use("/transactions",transactionsRouter);
+router.use("/categories/description",categoryDescriptionRouter);
 
 export default router;

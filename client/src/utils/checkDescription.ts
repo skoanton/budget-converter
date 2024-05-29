@@ -1,26 +1,35 @@
 
-import { getCategories } from "@/lib/categories/getCategories";
 import { CreateDescription } from "@/lib/descriptions/createDescription";
 import { getDescriptions } from "@/lib/descriptions/getDescriptions";
+import { getEntites } from "@/lib/getEntites";
+import { Category, CategoryDescription } from "@/types/categories";
+import { Description } from "@/types/descriptions";
 
-export const checkDescription = async (transactionDescription:string): Promise<number | null> => {
-    const categories = await getCategories();
-    const descriptions = await getDescriptions();
+export const checkDescription = async (
+  transactionDescription: string
+): Promise<number | null> => {
 
-    if(descriptions){
-     let descriptionID = descriptions.find((description) => description.name === transactionDescription )?.id;
-     if(!descriptionID){
-        await CreateDescription(transactionDescription);
-        const updatedDescriptions = await getDescriptions();
-        descriptionID = updatedDescriptions?.find(description => description.name === transactionDescription)?.id;
-     }
+  const categories = await getEntites<Category>("/categories");
+  const descriptions = await getEntites<Description>("/descriptions");
+const category_descriptions = await getEntites<CategoryDescription>("/categories/descriptions");
 
-     if(descriptionID){
-      const categoryId = categories.find((category) => category.description_ID === descriptionID)?.id;
-      return categoryId ?? 1;
-     }
-     
+  if (descriptions) {
+    let descriptionID = descriptions.find(
+      (description) => description.name === transactionDescription
+    )?.id;
+    if (!descriptionID) {
+      await CreateDescription(transactionDescription);
+      const updatedDescriptions = await getDescriptions();
+      descriptionID = updatedDescriptions?.find(
+        (description) => description.name === transactionDescription
+      )?.id;
     }
-    return null;
 
-}
+    if (descriptionID && category_descriptions) {
+            const categoryId = category_descriptions.find((catDesc) => catDesc.description_ID === descriptionID )?.category_ID;
+          return categoryId ?? 1;
+        }
+    
+  }
+  return null;
+};

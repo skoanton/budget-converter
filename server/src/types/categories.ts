@@ -4,7 +4,6 @@ export interface Category {
     budget: number;
     spent: number;
     category_type_ID: number;
-    description_ID: number | null;
   }
 
 
@@ -12,3 +11,10 @@ export interface Category {
     id: number;
     type: string;
   }
+
+
+export interface CategoryDescription{
+  id?:number,
+  category_ID:number,
+  description_ID:number
+}

@@ -13,7 +13,6 @@ const categorySchema = z.object({
     budget: z.number(),
     spent: z.number(),
     category_type_ID: z.number(),
-    description_ID: z.number().nullable()
 });
 
 
@@ -22,7 +21,6 @@ const updateCategorySchema = z.object({
     budget: z.number().optional(),
     spent: z.number().optional(),
     category_type_ID: z.number().optional(),
-    description_ID: z.number().optional().nullable(),
   });
 
 

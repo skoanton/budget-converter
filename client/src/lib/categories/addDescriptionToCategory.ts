@@ -5,8 +5,8 @@ export const addDescriptionToCategory = async (descriptionID: number,category: C
 
     try {
        
-       const updateData = {description_ID: descriptionID};
-        await apiRequest(`/categories/id/${category.id}`,"PATCH",updateData);
+       const updateData = {category_ID: category.id,description_ID: descriptionID};
+        await apiRequest(`/categories/description`,"POST",updateData);
         console.log(`Category with ID ${category.id} updated with description ID ${descriptionID}`);
        
       } catch (error) {
