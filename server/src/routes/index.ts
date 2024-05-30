@@ -8,6 +8,7 @@ import accountsRouter from "./accounts/accounts";
 import descriptionRouter from "./descriptions/descriptions";
 import transactionsRouter from "./transactions/transactions";
 import categoryDescriptionRouter from "./categories/categoryDescription"
+import expensesRouter from "./expenses/expenses";
 const router = Router();
 
 router.use("/categories/types",categoriesTypeRouter);
@@ -19,5 +20,6 @@ router.use("/accounts",accountsRouter);
 router.use("/descriptions",descriptionRouter);
 router.use("/transactions",transactionsRouter);
 router.use("/categories/descriptions",categoryDescriptionRouter);
+router.use("/expenses",expensesRouter);
 
 export default router;

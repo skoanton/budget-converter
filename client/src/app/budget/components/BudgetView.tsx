@@ -1,14 +1,6 @@
 "use client";
-
 import { useGetCategories } from "@/hooks/useGetCategories";
-
 import { CATEGORY_TYPES } from "@/constants/collectionsNames";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import BudgetCard from "./BudgetCard";
 import GenericAccordion from "@/components/Accordion/GenericAccordion";
 type BudgetViewProps = {
@@ -17,6 +9,7 @@ type BudgetViewProps = {
     name: string;
     id: number;
   };
+  date: Date;
 };
 
 export default function BudgetView({ title, categoryType }: BudgetViewProps) {
