@@ -7,6 +7,7 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -21,12 +22,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CATEGORY_TYPES } from "@/constants/collectionsNames";
 import { Transaction } from "@/types/transactions";
-import { Category, CategoryType } from "@/types/categories";
-import { useGetEntityById } from "@/hooks/useGetEntityById";
-import { getEntitiyById } from "@/lib/getEntityById";
 import { useTransactionStore } from "@/lib/store/useTransactionStore";
+import { fetchAndAddCategory } from "@/utils/categoryUtils";
+import CategorySelectGroup from "./CategorySelectGroup";
 
 const formSchema = z.object({
   categoryId: z.string(),
@@ -41,12 +40,9 @@ type CategoryFormProps = {
 
 export default function CategoryForm(props: CategoryFormProps) {
   const { transactions, updateTransaction } = useTransactionStore.getState();
-  const { expenseCategories, incomeCategories } = useGetCategories();
-  const { entity: currentCategoryType } = useGetEntityById<CategoryType>(
-    props.transaction.amount > 0 ? 1 : 2,
-    "/categories/types"
-  );
-  console.log("Current category type:", currentCategoryType);
+  const { expenseCategories, incomeCategories, savingsCategories } =
+    useGetCategories();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -58,45 +54,7 @@ export default function CategoryForm(props: CategoryFormProps) {
     handleSubmit(values.categoryId);
   }
 
-  const addNewCategory = (transaction: Transaction, category: Category) => {
-    const newCategorizedTransactions = transactions.filter((trans) => {
-      return (
-        trans.description_ID === transaction.description_ID &&
-        Math.sign(trans.amount) === Math.sign(transaction.amount) // Lägger bara till descriptions med samma value (+ eller -)
-      );
-    });
-
-    newCategorizedTransactions.forEach((trans) => {
-      if (typeof trans.id === "string" && typeof category.id !== "string") {
-        updateTransaction(trans.id, category.id!);
-      } else {
-        console.error("Transaction ID is not a string");
-      }
-    });
-  };
-
-  const fetchAndAddCategory = async (
-    transaction: Transaction,
-    categoryID: string
-  ) => {
-    try {
-      const category = await getEntitiyById<Category>(
-        Number(categoryID),
-        "/categories"
-      );
-      if (category) {
-        addNewCategory(transaction, category);
-      } else {
-        console.error("Fetched category is undefined");
-      }
-    } catch (error) {
-      console.error("Could not fetch category by ID", error);
-    }
-  };
-
   const handleSubmit = async (categoryID: string) => {
-    console.log("ADD CATEGORY:", props.addCategory);
-    console.log("CHANGE CATEGORY:", props.changeCategory);
     if (props.addCategory === props.changeCategory) {
       console.error(
         "Either addCategory or changeCategory must be true, but not both or neither."
@@ -106,7 +64,12 @@ export default function CategoryForm(props: CategoryFormProps) {
 
     if (props.addCategory) {
       try {
-        await fetchAndAddCategory(props.transaction, categoryID);
+        await fetchAndAddCategory(
+          props.transaction,
+          categoryID,
+          transactions,
+          updateTransaction
+        );
         console.log("Added transaction to category");
       } catch (error) {
         console.error("Could not fetch and add category", error);
@@ -139,45 +102,18 @@ export default function CategoryForm(props: CategoryFormProps) {
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectGroup>
-                        {currentCategoryType?.id ===
-                        CATEGORY_TYPES.EXPENSE.id ? (
-                          expenseCategories.length > 0 ? (
-                            expenseCategories.map((category) => (
-                              <SelectItem
-                                key={category.id}
-                                value={category.id!.toString()}
-                              >
-                                {category.name}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <SelectItem value="None">
-                              No Expense Categories Found
-                            </SelectItem>
-                          )
-                        ) : currentCategoryType?.id ===
-                          CATEGORY_TYPES.INCOME.id ? (
-                          incomeCategories.length > 0 ? (
-                            incomeCategories.map((category) => (
-                              <SelectItem
-                                key={category.id}
-                                value={category.id!.toString()}
-                              >
-                                {category.name}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <SelectItem value="None">
-                              No Income Categories Found
-                            </SelectItem>
-                          )
-                        ) : (
-                          <SelectItem value="None">
-                            No Categories found
-                          </SelectItem>
-                        )}
-                      </SelectGroup>
+                      <CategorySelectGroup
+                        title="Expense"
+                        categories={expenseCategories}
+                      />
+                      <CategorySelectGroup
+                        title="Income"
+                        categories={incomeCategories}
+                      />
+                      <CategorySelectGroup
+                        title="Savings"
+                        categories={savingsCategories}
+                      />
                     </SelectContent>
                   </Select>
                 </FormControl>

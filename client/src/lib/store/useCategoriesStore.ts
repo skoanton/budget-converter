@@ -1,4 +1,5 @@
 import { Category } from "@/types/categories";
+import { sortCategory } from "@/utils/sortCategory";
 import {create} from "zustand";
 
 interface CategoryState {
@@ -6,9 +7,11 @@ interface CategoryState {
     incomeCategories: Category[],
     expenseCategories: Category[],
     savingsCategories: Category[],
+    newCategories: Category [],
     addCategory: (category:Category) => void,
     setCategories: (categories: Category[]) => void,
     deleteCategory: (category:Category) => void,
+    clearNewCategories: () => void,
     clearCategories: () => void
 }
 
@@ -17,6 +20,7 @@ export const useCategoryStore = create<CategoryState>()((set) => ({
     incomeCategories: [],
     expenseCategories: [],
     savingsCategories: [],
+    newCategories: [],
     addCategory: (category) =>
         set((state) => {
             const updatedIncomeCategories = category.category_type_ID === 1
@@ -34,6 +38,7 @@ export const useCategoryStore = create<CategoryState>()((set) => ({
 
             return {
                 allCategories: [...state.allCategories,category],
+                newCategories: [...state.newCategories,category],
                 incomeCategories: updatedIncomeCategories,
                 expenseCategories: updatedExpenseCategories,
                 savingsCategories: updatedSavingsCategories
@@ -59,11 +64,15 @@ export const useCategoryStore = create<CategoryState>()((set) => ({
                     break;
                 }
               });
+              const sortedIncomeCategories = sortCategory(incomeCategories);
+              const sortedExpenseCategories = sortCategory(expenseCategories);
+              const sortedSavingsCategories = sortCategory(savingsCategories);
+              
               return {
                 allCategories: categories,
-                incomeCategories,
-                expenseCategories,
-                savingsCategories,
+                incomeCategories : sortedIncomeCategories,
+                expenseCategories : sortedExpenseCategories,
+                savingsCategories: sortedSavingsCategories,
               };
             }),
             deleteCategory: (category) =>
@@ -95,10 +104,14 @@ export const useCategoryStore = create<CategoryState>()((set) => ({
                   savingsCategories: filteredSavingsCategories,
                 };
               }),
+              clearNewCategories:() => set ({
+                newCategories:[],
+              }),
         clearCategories: () => set({
             allCategories: [],
             incomeCategories: [],
             expenseCategories: [],
             savingsCategories: [],
+            newCategories:[],
         })
 }))

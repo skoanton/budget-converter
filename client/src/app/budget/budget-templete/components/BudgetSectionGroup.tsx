@@ -8,11 +8,13 @@ import { useState } from "react";
 import BudgetAccordion from "./BudgetAccordion";
 
 export default function BudgetSectionGroup() {
-  const categories = useCategoryStore((state) => state.allCategories);
+  const newCategories = useCategoryStore((state) => state.newCategories);
+  const { clearNewCategories } = useCategoryStore();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const handleSaveBudget = async () => {
     setIsLoading(true);
-    await uploadCategories(categories);
+    await uploadCategories(newCategories);
+    clearNewCategories();
     setIsLoading(false);
   };
 
