@@ -41,6 +41,7 @@ export default function TransactionTable(props: TransactionTableProps) {
             <TableHead className="w-[100px]">Date</TableHead>
             <TableHead>Account</TableHead>
             <TableHead>Description</TableHead>
+            <TableHead>Category</TableHead>
             <TableHead className="text-right">Amount</TableHead>
           </TableRow>
         </TableHeader>

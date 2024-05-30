@@ -3,6 +3,7 @@ import z from "zod"
 import { CategoryDescription } from "../../types/categories";
 import { handlePostRequest } from "../../lib/handlePostRequest";
 import { getAllPosts } from "../../lib/getAllPosts";
+import { getPostById } from "../../lib/getPostsById";
 
 const router = Router();
 
@@ -28,6 +29,7 @@ router.get("/",async (req,res) => {
 
     await getAllPosts<CategoryDescription>("category_descriptions",res);
 })
+
 
 
 export default router;

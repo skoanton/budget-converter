@@ -26,18 +26,20 @@ export default function TransactionRow({ transaction }: TransactionRowProps) {
     useGetEntityById<Category>(transaction.category_ID, "/categories");
 
   const { entity: description, loading: descriptionLoading } =
-    useGetEntityById<Description>(transaction.description_ID, "/descrpitions");
+    useGetEntityById<Description>(transaction.description_ID, "/descriptions");
 
+  const date = new Date(transaction.date);
   return (
     <>
       <TableRow>
-        <TableCell>{transaction.date.toLocaleDateString()}</TableCell>
+        <TableCell>{date.toLocaleDateString()}</TableCell>
         <TableCell>{account?.name}</TableCell>
         <TableCell className="font-medium">
           <Link href={`/transactions/${transaction.id}`}>
-            {description?.name}{" "}
+            {description?.name}
           </Link>
         </TableCell>
+        <TableCell>{category?.name}</TableCell>
         <TableCell className="text-right">{transaction.amount} kr</TableCell>
       </TableRow>
     </>

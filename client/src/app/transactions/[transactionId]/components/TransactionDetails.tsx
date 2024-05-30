@@ -31,7 +31,7 @@ export default function TransactionDetails({
       transaction.description_ID,
       "/categories/descriptions"
     );
-
+  const date = new Date(transaction.date);
   if (accountLoading || categoryLoading) {
     return <div>Loading....</div>;
   }
@@ -47,9 +47,7 @@ export default function TransactionDetails({
         <CardContent>
           <ul>
             <li className="font-bold">{transaction.amount} kr</li>
-            <li className="font-bold">
-              {transaction.date.toLocaleDateString()}
-            </li>
+            <li className="font-bold">{date.toLocaleDateString()}</li>
           </ul>
         </CardContent>
         <CardFooter>
