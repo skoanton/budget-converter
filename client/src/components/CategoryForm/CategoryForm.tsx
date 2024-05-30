@@ -46,6 +46,7 @@ export default function CategoryForm(props: CategoryFormProps) {
     props.transaction.amount > 0 ? 1 : 2,
     "/categories/types"
   );
+  console.log("Current category type:", currentCategoryType);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
