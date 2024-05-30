@@ -22,10 +22,11 @@ export default function BudgetCard({
   return (
     <>
       <Card>
-        <CardHeader className=" flex-row justify-between items-center">
-          <CardTitle>{category.name}</CardTitle>
-        </CardHeader>
         <Link href={`budget/${category.id}`}>
+          <CardHeader className=" flex-row justify-between items-center">
+            <CardTitle>{category.name}</CardTitle>
+          </CardHeader>
+
           <CardContent>
             {categoryType === CATEGORY_TYPES.INCOME ? (
               <>

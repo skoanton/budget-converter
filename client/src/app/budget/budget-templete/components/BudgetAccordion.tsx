@@ -8,6 +8,7 @@ import {
 
 import BudgetForm from "./BudgetForm";
 import BudgetList from "./BudgetList";
+import GenericAccordion from "@/components/Accordion/GenericAccordion";
 
 type BudgetAccordionProps = {
   title: string;
@@ -23,17 +24,10 @@ export default function BudgetAccordion({
 }: BudgetAccordionProps) {
   return (
     <>
-      <Accordion type="single" collapsible>
-        <AccordionItem value={categoryType.id.toString()}>
-          <AccordionTrigger className="text-2xl font-bold">
-            {title}
-          </AccordionTrigger>
-          <AccordionContent>
-            <BudgetList categoryType={categoryType} />
-            <BudgetForm categoryType={categoryType} />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      <GenericAccordion title={title}>
+        <BudgetList categoryType={categoryType} />
+        <BudgetForm categoryType={categoryType} />
+      </GenericAccordion>
     </>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowRightLeft,
@@ -10,7 +12,7 @@ import {
 
 export default function Navbar() {
   return (
-    <div className="h-full bg-primary flex flex-col gap-10 min-w-max p-8">
+    <div className="bg-primary flex flex-col gap-10 min-w-max p-8 h-screen">
       <h1 className="text-primary-foreground text-4xl">Budget App</h1>
       <nav>
         <ul className="flex flex-col text-xl gap-5">

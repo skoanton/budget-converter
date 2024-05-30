@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import TransactionTable from "@/app/transactions/components/TransactionTable/TransactionTable";
+import GenericAccordion from "@/components/Accordion/GenericAccordion";
 
 export default function AccountInformationPage({
   params,
@@ -14,17 +15,12 @@ export default function AccountInformationPage({
 }) {
   return (
     <>
-      <Accordion type="single" collapsible>
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Transactions</AccordionTrigger>
-          <AccordionContent>
-            <TransactionTable
-              allTransactions={false}
-              accountId={params.accountId}
-            />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      <GenericAccordion title="Transactions">
+        <TransactionTable
+          allTransactions={false}
+          accountId={params.accountId}
+        />
+      </GenericAccordion>
     </>
   );
 }

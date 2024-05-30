@@ -20,13 +20,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={cn(
-          "h-screen flex bg-background font-sans antialiased",
-          fontSans.variable
-        )}
+        className={cn("bg-background font-sans antialiased", fontSans.variable)}
       >
-        <Navbar />
-        <main className="w-screen p-4">{children}</main>
+        <div className="flex">
+          <aside className="self-start sticky top-0 max-w-max">
+            <Navbar />
+          </aside>
+
+          <main className="p-2 w-full">{children}</main>
+        </div>
       </body>
     </html>
   );
