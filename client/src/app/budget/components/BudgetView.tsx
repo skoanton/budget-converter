@@ -9,10 +9,14 @@ type BudgetViewProps = {
     name: string;
     id: number;
   };
-  date: Date;
+  date: Date[];
 };
 
-export default function BudgetView({ title, categoryType }: BudgetViewProps) {
+export default function BudgetView({
+  title,
+  categoryType,
+  date,
+}: BudgetViewProps) {
   const { expenseCategories, incomeCategories } = useGetCategories();
   return (
     <>
@@ -26,6 +30,7 @@ export default function BudgetView({ title, categoryType }: BudgetViewProps) {
                     key={expenseCategory.id}
                     category={expenseCategory}
                     categoryType={categoryType}
+                    date={date}
                   />
                 ))}
             </>
@@ -37,6 +42,7 @@ export default function BudgetView({ title, categoryType }: BudgetViewProps) {
                     key={incomeCategory.id}
                     category={incomeCategory}
                     categoryType={categoryType}
+                    date={date}
                   />
                 ))}
             </>

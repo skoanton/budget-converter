@@ -39,9 +39,9 @@ export default function DateForm({ onSetDate }: DateFormProps) {
   const months = getMonths();
   const dateForm = useForm<z.infer<typeof dateSchema>>({
     resolver: zodResolver(dateSchema),
-    values: {
+    defaultValues: {
       year: new Date().getFullYear(),
-      month: "",
+      month: getMonths()[new Date().getMonth()],
     },
   });
 
@@ -66,7 +66,10 @@ export default function DateForm({ onSetDate }: DateFormProps) {
             render={({ field }) => (
               <FormItem className="flex gap-2">
                 <FormControl>
-                  <Select onValueChange={field.onChange}>
+                  <Select
+                    defaultValue={field.value.toString()}
+                    onValueChange={field.onChange}
+                  >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Select a year" />
                     </SelectTrigger>
@@ -95,7 +98,10 @@ export default function DateForm({ onSetDate }: DateFormProps) {
             render={({ field }) => (
               <FormItem className="flex gap-2">
                 <FormControl>
-                  <Select onValueChange={field.onChange}>
+                  <Select
+                    defaultValue={field.value.toString()}
+                    onValueChange={field.onChange}
+                  >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Select a month" />
                     </SelectTrigger>

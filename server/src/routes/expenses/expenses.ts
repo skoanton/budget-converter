@@ -5,8 +5,8 @@ const router = Router();
 
 const getMonthylExpensesSchema = z.object({
     category_ID: z.number(),
-    startDate: z.number(),
-    endDate: z.number(),
+    startDate: z.string(),
+    endDate: z.string(),
 })
 
 type MonthlyExpsense = z.infer<typeof getMonthylExpensesSchema>;

@@ -39,9 +39,9 @@ export default function BudgetCard({
     fetchTotalAmount();
   }, [date]);
 
-  const spentAmount = Math.round(Math.abs(category.spent));
-  const budgetDif = Math.round(Math.abs(category.spent)) - category.budget;
-
+  const spentAmount = Math.round(Math.abs(totalAmount));
+  const budgetDif = Math.round(Math.abs(totalAmount)) - category.budget;
+  console.log("Total spent:", totalAmount);
   return (
     <>
       <Card>
@@ -57,7 +57,7 @@ export default function BudgetCard({
                   Income:{" "}
                   <span className="font-normal">
                     {" "}
-                    {totalAmount}/{category.budget} kr
+                    {spentAmount}/{category.budget} kr
                   </span>
                 </p>
                 <p className="font-bold">
@@ -78,8 +78,7 @@ export default function BudgetCard({
                     Spent:{" "}
                     <span className="font-normal">
                       {" "}
-                      {Math.round(Math.abs(category.spent))}/{category.budget}{" "}
-                      kr
+                      {Math.round(Math.abs(spentAmount))}/{category.budget} kr
                     </span>
                   </p>
                   <p className="font-bold">

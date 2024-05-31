@@ -10,10 +10,8 @@ export default function Budget() {
   const [date, setDate] = useState<Date[]>(
     getDaysInMonth(new Date().getFullYear(), new Date().getMonth())
   );
-
   const onSetDate = (date: Date[]) => {
     setDate(date);
-    console.log("Date:", date);
   };
 
   return (
