@@ -6,6 +6,7 @@ import { CATEGORY_TYPES } from "@/constants/collectionsNames";
 import { Category } from "@/types/categories";
 import { useEffect, useState } from "react";
 import { getMonthlyExpense } from "@/lib/categories/getMonthlyExpense";
+import BudgetCardInformation from "./BudgetCardInformation";
 type BudgetCardProps = {
   category: Category;
   categoryType: {
@@ -20,28 +21,6 @@ export default function BudgetCard({
   categoryType,
   date,
 }: BudgetCardProps) {
-  const [totalAmount, setTotalAmount] = useState<number>(0);
-
-  useEffect(() => {
-    const fetchTotalAmount = async () => {
-      try {
-        const fetchedAmount = await getMonthlyExpense(category, date);
-
-        if (fetchedAmount) {
-          setTotalAmount(fetchedAmount.total_amount);
-        } else {
-          console.log("fetched amount is empty bitch");
-        }
-      } catch (error) {
-        console.error("could not fetch total amount in useeffect", error);
-      }
-    };
-    fetchTotalAmount();
-  }, [date]);
-
-  const spentAmount = Math.round(Math.abs(totalAmount));
-  const budgetDif = Math.round(Math.abs(totalAmount)) - category.budget;
-  console.log("Total spent:", totalAmount);
   return (
     <>
       <Card>
@@ -52,48 +31,12 @@ export default function BudgetCard({
 
           <CardContent>
             {categoryType === CATEGORY_TYPES.INCOME ? (
-              <>
-                <p className="font-bold">
-                  Income:{" "}
-                  <span className="font-normal">
-                    {" "}
-                    {spentAmount}/{category.budget} kr
-                  </span>
-                </p>
-                <p className="font-bold">
-                  Budget difference:{" "}
-                  <span
-                    className={`${
-                      budgetDif < 0 ? "text-red-500" : "text-green-500"
-                    } font normal`}
-                  >
-                    {Math.abs(budgetDif)} kr
-                  </span>
-                </p>
-              </>
-            ) : (
-              categoryType === CATEGORY_TYPES.EXPENSE && (
-                <>
-                  <p className="font-bold">
-                    Spent:{" "}
-                    <span className="font-normal">
-                      {" "}
-                      {Math.round(Math.abs(spentAmount))}/{category.budget} kr
-                    </span>
-                  </p>
-                  <p className="font-bold">
-                    Budget difference:{" "}
-                    <span
-                      className={`${
-                        budgetDif > 0 ? "text-red-500" : "text-green-500"
-                      } font normal`}
-                    >
-                      {Math.abs(budgetDif)} kr
-                    </span>
-                  </p>
-                </>
-              )
-            )}
+              <BudgetCardInformation category={category} date={date} />
+            ) : categoryType === CATEGORY_TYPES.EXPENSE ? (
+              <BudgetCardInformation category={category} date={date} />
+            ) : categoryType === CATEGORY_TYPES.SAVINGS ? (
+              <BudgetCardInformation category={category} date={date} />
+            ) : null}
           </CardContent>
         </Link>
       </Card>

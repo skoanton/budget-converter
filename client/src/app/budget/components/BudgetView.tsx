@@ -17,7 +17,8 @@ export default function BudgetView({
   categoryType,
   date,
 }: BudgetViewProps) {
-  const { expenseCategories, incomeCategories } = useGetCategories();
+  const { expenseCategories, incomeCategories, savingsCategories } =
+    useGetCategories();
   return (
     <>
       <GenericAccordion title={title}>
@@ -41,6 +42,18 @@ export default function BudgetView({
                   <BudgetCard
                     key={incomeCategory.id}
                     category={incomeCategory}
+                    categoryType={categoryType}
+                    date={date}
+                  />
+                ))}
+            </>
+          ) : categoryType === CATEGORY_TYPES.SAVINGS ? (
+            <>
+              {savingsCategories.length > 0 &&
+                savingsCategories.map((savingcategory) => (
+                  <BudgetCard
+                    key={savingcategory.id}
+                    category={savingcategory}
                     categoryType={categoryType}
                     date={date}
                   />
